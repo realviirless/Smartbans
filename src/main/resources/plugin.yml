@@ -1,5 +1,5 @@
-name: Smartbans
-version: 'BETA-1.3'
+name: Smartban
+version: '1.0-SNAPSHOT'
 main: org.viirless.smartban.BanPlugin
 api-version: '1.21'
 
@@ -7,50 +7,43 @@ commands:
   ban:
     description: Ban a player with configurable reasons
     usage: /ban <player> <id>
+    permission: banplugin.ban
   unban:
     description: Unban a player
     usage: /unban <player>
+    permission: banplugin.unban
   kick:
     description: Kick a player with a custom reason
     usage: /kick <player> <reason>
-  mute:
-    description: Mute a player with configurable reasons
-    usage: /mute <player> <id>
-  unmute:
-    description: Unmute a player
-    usage: /unmute <player>
+    permission: banplugin.kick
 
 permissions:
   banplugin.ban:
     description: Allows banning players
-    default: op
+    default: false
   banplugin.unban:
     description: Allows unbanning players
-    default: op
+    default: false
   banplugin.kick:
     description: Allows kicking players
-    default: op
-  banplugin.mute:
-    description: Allows muting players
-    default: op
-  banplugin.unmute:
-    description: Allows unmuting players
-    default: op
+    default: false
   banplugin.bypass:
-    description: Prevents being banned, kicked or muted by other staff members
-    default: op
+    description: Prevents being banned by other staff members
+    default: false
+  banplugin.kick.bypass:
+    description: Prevents being kicked by other staff members
+    default: false
   banplugin.admin:
-    description: Grants all administrative permissions
-    default: op
+    description: Full ban plugin access
+    default: false
     children:
       banplugin.ban: true
       banplugin.unban: true
       banplugin.kick: true
-      banplugin.mute: true
-      banplugin.unmute: true
   banplugin.*:
-    description: Grants all plugin permissions including bypass
-    default: op
+    description: All ban plugin permissions
+    default: false
     children:
       banplugin.admin: true
       banplugin.bypass: true
+      banplugin.kick.bypass: true

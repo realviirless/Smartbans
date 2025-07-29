@@ -1,11 +1,6 @@
 # Ban Plugin Configuration
 # Configure ban reasons, durations, and IDs
 
-settings:
-  use-id-system:
-    ban: true    # true = use IDs (1,2,3), false = use reasons directly
-    mute: true   # true = use IDs (1,2,3), false = use reasons directly
-
 bans:
   1:
     reason: "Cheating/Hacking"
@@ -32,23 +27,6 @@ bans:
     reason: "Staff Disrespect"
     duration: "2d"
 
-mutes:
-  1:
-    reason: "Chat Spam"
-    duration: "1h"
-  2:
-    reason: "Insulting Players"
-    duration: "2h"
-  3:
-    reason: "Racism"
-    duration: "7d"
-  4:
-    reason: "Advertising"
-    duration: "1d"
-  5:
-    reason: "Toxic Behavior"
-    duration: "3d"
-
 # Duration format:
 # s = seconds, m = minutes, h = hours, d = days
 # Examples: 30s, 5m, 2h, 7d
@@ -71,28 +49,3 @@ messages:
   usage-ban: "&cUsage: /ban <player> <id>"
   usage-unban: "&cUsage: /unban <player>"
   usage-kick: "&cUsage: /kick <player> <reason>"
-  mute-success: "&aSuccessfully muted &c{player} &afor &e{reason} &afor &c{duration}"
-  unmute-success: "&aSuccessfully unmuted &c{player}"
-  player-muted: "&cYou have been muted in this server!\n&cReason: &e{reason}\n&cExpires: &e{expires}"
-  player-unmuted: "&cYou have been unmuted in this server!"
-  already-muted: "&c{player} is already muted!"
-  not-muted: "&c{player} is not muted!"
-  cannot-mute-staff: "&cYou cannot mute this player - they have bypass permission!"
-  usage-mute: "&cUsage: /mute <player> <mute-id>"
-  invalid-mute-id: "&cInvalid mute ID! Available IDs: {ids}"
-
-usage-format:
-  divider: "&7&m--------------------------------"
-  ban-command:
-    header: "&cUsage: &7/ban <player> <ban-id>"
-    list-header: "&cAvailable Ban IDs:"
-    format: "&7ID: &c{id} &7| Reason: &c{reason} &7| Duration: &c{duration}"
-  mute-command:
-    header: "&cUsage: &7/mute <player> <mute-id>"
-    list-header: "&cAvailable Mute IDs:"
-    format: "&7ID: &c{id} &7| Reason: &c{reason} &7| Duration: &c{duration}"
-  kick-command:
-    header: "&cUsage: &7/kick <player> <reason>"
-    list-header: "&cKick Command Help:"
-    info: "&7Write your custom kick reason after the player name."
-    example: "&7Example: &c/kick Player1 Breaking the rules"
