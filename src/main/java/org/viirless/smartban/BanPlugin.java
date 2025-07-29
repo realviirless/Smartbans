@@ -22,7 +22,6 @@ public class BanPlugin extends JavaPlugin {
         // Register commands
         getCommand("ban").setExecutor(new BanCommand(this));
         getCommand("unban").setExecutor(new UnbanCommand(this));
-        getCommand("kick").setExecutor(new KickCommand(this));
 
         // Register event listener
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
