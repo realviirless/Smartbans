@@ -17,28 +17,43 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         String uuid = event.getPlayer().getUniqueId().toString();
+        String banPath = "banned-players." + uuid;
 
         // Check if player is banned
-        if (!plugin.getBansConfig().contains("banned-players." + uuid)) {
+        if (!plugin.getBansConfig().contains(banPath)) {
             return; // Player is not banned
         }
 
         // Get ban details
-        long expiryTime = plugin.getBansConfig().getLong("banned-players." + uuid + ".expires");
-        String reason = plugin.getBansConfig().getString("banned-players." + uuid + ".reason");
+        long banTime = plugin.getBansConfig().getLong(banPath + ".time");
+        long duration = plugin.getBansConfig().getLong(banPath + ".duration");
+        String reason = plugin.getBansConfig().getString(banPath + ".reason");
+
+        // Calculate expiry time (-1 duration means permanent ban)
+        if (duration == -1) {
+            // Permanent ban
+            kickBannedPlayer(event, reason, -1);
+            return;
+        }
+
+        long expiryTime = banTime + duration;
 
         // Check if ban has expired
         if (System.currentTimeMillis() >= expiryTime) {
             // Ban has expired, remove it
-            plugin.getBansConfig().set("banned-players." + uuid, null);
+            plugin.getBansConfig().set(banPath, null);
             plugin.saveBansConfig();
             return; // Let player join
         }
 
         // Ban is still active, kick the player
+        kickBannedPlayer(event, reason, expiryTime);
+    }
+
+    private void kickBannedPlayer(PlayerJoinEvent event, String reason, long expiryTime) {
         String kickMessage = plugin.getConfig().getString("messages.player-banned")
                 .replace("{reason}", reason)
-                .replace("{expires}", new Date(expiryTime).toString());
+                .replace("{expires}", expiryTime == -1 ? "Never" : new Date(expiryTime).toString());
 
         event.getPlayer().kickPlayer(colorize(kickMessage));
     }

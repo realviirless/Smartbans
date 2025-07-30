@@ -98,19 +98,30 @@ public class MuteCommand implements CommandExecutor {
 
         String reason = plugin.getConfig().getString("mutes." + muteId + ".reason");
         String duration = plugin.getConfig().getString("mutes." + muteId + ".duration");
-        long expiryTime = System.currentTimeMillis() + parseDuration(duration);
+        long durationMs = parseDuration(duration);
+        long expiryTime = System.currentTimeMillis() + durationMs;
 
-        String uuid = target.getUniqueId().toString();
-        plugin.getBansConfig().set("muted-players." + uuid + ".reason", reason);
-        plugin.getBansConfig().set("muted-players." + uuid + ".expires", expiryTime);
-        plugin.getBansConfig().set("muted-players." + uuid + ".muted-by", sender instanceof ConsoleCommandSender ? "CONSOLE" : sender.getName());
-        plugin.getBansConfig().set("muted-players." + uuid + ".muted-at", System.currentTimeMillis());
+        // Add to history
+        plugin.addToHistory(
+            target.getUniqueId().toString(),
+            "MUTE",
+            sender.getName(),
+            reason,
+            durationMs
+        );
+
+        // Save mute in config
+        String mutePath = "muted-players." + target.getUniqueId().toString();
+        plugin.getBansConfig().set(mutePath + ".reason", reason);
+        plugin.getBansConfig().set(mutePath + ".by", sender.getName());
+        plugin.getBansConfig().set(mutePath + ".time", System.currentTimeMillis());
+        plugin.getBansConfig().set(mutePath + ".expires", expiryTime);
+        plugin.saveBansConfig();
 
         // Debug output
-        plugin.getLogger().info("Muting player " + target.getName() + " (UUID: " + uuid + ")");
+        plugin.getLogger().info("Muting player " + target.getName() + " (UUID: " + target.getUniqueId().toString() + ")");
         plugin.getLogger().info("Mute data: reason=" + reason + ", expires=" + expiryTime);
 
-        plugin.saveBansConfig();
         // Reload the config to ensure it's saved
         plugin.reloadBansConfig();
 

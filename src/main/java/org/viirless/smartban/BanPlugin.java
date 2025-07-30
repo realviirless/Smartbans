@@ -10,14 +10,17 @@ public class BanPlugin extends JavaPlugin {
 
     private File bansFile;
     private FileConfiguration bansConfig;
+    private File historyFile;
+    private FileConfiguration historyConfig;
 
     @Override
     public void onEnable() {
         // Save default config if it doesn't exist
         saveDefaultConfig();
 
-        // Create bans.yml file for storing active bans
+        // Create bans.yml and history.yml files
         createBansFile();
+        createHistoryFile();
 
         // Create TabCompleter instance
         BanTabCompleter tabCompleter = new BanTabCompleter(this);
@@ -28,6 +31,8 @@ public class BanPlugin extends JavaPlugin {
         getCommand("kick").setExecutor(new KickCommand(this));
         getCommand("mute").setExecutor(new MuteCommand(this));
         getCommand("unmute").setExecutor(new UnmuteCommand(this));
+        getCommand("history").setExecutor(new HistoryCommand(this));
+        getCommand("smartbans").setExecutor(new ReloadCommand(this));
 
         // Register tab completers
         getCommand("ban").setTabCompleter(tabCompleter);
@@ -59,6 +64,14 @@ public class BanPlugin extends JavaPlugin {
         bansConfig = YamlConfiguration.loadConfiguration(bansFile);
     }
 
+    private void createHistoryFile() {
+        historyFile = new File(getDataFolder(), "history.yml");
+        if (!historyFile.exists()) {
+            saveResource("history.yml", false);
+        }
+        historyConfig = YamlConfiguration.loadConfiguration(historyFile);
+    }
+
     public FileConfiguration getBansConfig() {
         return bansConfig;
     }
@@ -74,5 +87,35 @@ public class BanPlugin extends JavaPlugin {
 
     public void reloadBansConfig() {
         bansConfig = YamlConfiguration.loadConfiguration(bansFile);
+    }
+
+    public FileConfiguration getHistoryConfig() {
+        return historyConfig;
+    }
+
+    public void saveHistoryConfig() {
+        try {
+            historyConfig.save(historyFile);
+        } catch (IOException e) {
+            getLogger().severe("Could not save history.yml!");
+            e.printStackTrace();
+        }
+    }
+
+    public void reloadHistoryConfig() {
+        if (historyFile == null) {
+            historyFile = new File(getDataFolder(), "history.yml");
+        }
+        historyConfig = YamlConfiguration.loadConfiguration(historyFile);
+    }
+
+    public void addToHistory(String uuid, String type, String by, String reason, long duration) {
+        String key = uuid + "." + System.currentTimeMillis();
+        historyConfig.set(key + ".type", type);
+        historyConfig.set(key + ".by", by);
+        historyConfig.set(key + ".reason", reason);
+        historyConfig.set(key + ".date", System.currentTimeMillis());
+        historyConfig.set(key + ".duration", duration);
+        saveHistoryConfig();
     }
 }

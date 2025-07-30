@@ -102,19 +102,31 @@ public class BanCommand implements CommandExecutor {
             return true;
         }
 
-        // Get ban details from config
-        String reason = plugin.getConfig().getString("bans." + banId + ".reason");
-        String duration = plugin.getConfig().getString("bans." + banId + ".duration");
+        // Get ban details
+        ConfigurationSection banSection = plugin.getConfig().getConfigurationSection("bans." + banId);
+        String reason = banSection.getString("reason");
+        String durationStr = banSection.getString("duration");
+        long duration = parseDuration(durationStr);
+        // Calculate expiry time (-1 duration means permanent ban)
+        long expiryTime = duration == -1 ? -1 : System.currentTimeMillis() + duration;
 
-        // Calculate expiry time
-        long expiryTime = System.currentTimeMillis() + parseDuration(duration);
+        String banner = sender instanceof org.bukkit.command.ConsoleCommandSender ? "CONSOLE" : sender.getName();
 
-        // Store ban in bans.yml
-        String uuid = target.getUniqueId().toString();
-        plugin.getBansConfig().set("banned-players." + uuid + ".reason", reason);
-        plugin.getBansConfig().set("banned-players." + uuid + ".expires", expiryTime);
-        plugin.getBansConfig().set("banned-players." + uuid + ".banned-by", sender.getName());
-        plugin.getBansConfig().set("banned-players." + uuid + ".banned-at", System.currentTimeMillis());
+        // Add to history
+        plugin.addToHistory(
+            target.getUniqueId().toString(),
+            "BAN",
+            banner,
+            reason,
+            duration
+        );
+
+        // Save ban in config
+        String banPath = "banned-players." + target.getUniqueId().toString();
+        plugin.getBansConfig().set(banPath + ".reason", reason);
+        plugin.getBansConfig().set(banPath + ".by", banner);
+        plugin.getBansConfig().set(banPath + ".time", System.currentTimeMillis());
+        plugin.getBansConfig().set(banPath + ".duration", duration);
         plugin.saveBansConfig();
 
         // Kick player if online
@@ -127,10 +139,11 @@ public class BanCommand implements CommandExecutor {
         }
 
         // Send success message
+        String formattedDuration = duration == -1 ? "Permanent" : formatDuration(duration);
         String successMessage = plugin.getConfig().getString("messages.ban-success")
                 .replace("{player}", target.getName())
                 .replace("{reason}", reason)
-                .replace("{duration}", duration);
+                .replace("{duration}", formattedDuration);
         sender.sendMessage(colorize(successMessage));
 
         return true;
@@ -174,13 +187,18 @@ public class BanCommand implements CommandExecutor {
 
     private long parseDuration(String duration) {
         if (duration == null || duration.isEmpty()) {
-            return 24 * 60 * 60 * 1000; // Default 1 day
+            return -1; // Permanent ban by default
         }
 
-        String timeUnit = duration.substring(duration.length() - 1).toLowerCase();
-        String timeValue = duration.substring(0, duration.length() - 1);
-
         try {
+            // Check if it's a special value
+            if (duration.equalsIgnoreCase("permanent") || duration.equals("-1")) {
+                return -1;
+            }
+
+            String timeUnit = duration.substring(duration.length() - 1).toLowerCase();
+            String timeValue = duration.substring(0, duration.length() - 1);
+
             long value = Long.parseLong(timeValue);
             switch (timeUnit) {
                 case "s":
@@ -192,10 +210,29 @@ public class BanCommand implements CommandExecutor {
                 case "d":
                     return value * 24 * 60 * 60 * 1000;
                 default:
-                    return 24 * 60 * 60 * 1000; // Default 1 day
+                    plugin.getLogger().warning("Invalid duration format in config: " + duration + ". Using permanent ban.");
+                    return -1;
             }
-        } catch (NumberFormatException e) {
-            return 24 * 60 * 60 * 1000; // Default 1 day
+        } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
+            plugin.getLogger().warning("Invalid duration format in config: " + duration + ". Using permanent ban.");
+            return -1;
+        }
+    }
+
+    private String formatDuration(long duration) {
+        long seconds = duration / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = hours / 24;
+
+        if (days > 0) {
+            return days + " day(s)";
+        } else if (hours > 0) {
+            return hours + " hour(s)";
+        } else if (minutes > 0) {
+            return minutes + " minute(s)";
+        } else {
+            return seconds + " second(s)";
         }
     }
 

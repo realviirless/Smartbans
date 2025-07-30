@@ -80,6 +80,21 @@ messages:
   cannot-mute-staff: "&cYou cannot mute this player - they have bypass permission!"
   usage-mute: "&cUsage: /mute <player> <mute-id>"
   invalid-mute-id: "&cInvalid mute ID! Available IDs: {ids}"
+  history:
+    title: "&8History of {player}"
+    no-entries: "&cNo history entries found"
+    entry:
+      ban: "&eBan"
+      mute: "&eMute"
+      by: "&7By: &f{staff}"
+      reason: "&7Reason: &f{reason}"
+      date: "&7Date: &f{date}"
+      duration:
+        permanent: "&7Duration: &fPermanent"
+        temporary: "&7Duration: &f{duration}"
+  invalid-player: "&cPlease enter a valid player name"
+  history-usage: "&cUsage: /history <player>"
+  reload-success: "&aConfiguration successfully reloaded!"
 
 usage-format:
   divider: "&7&m--------------------------------"

@@ -1,5 +1,5 @@
 name: Smartbans
-version: 'BETA 1.3'
+version: 'BETA 1.4'
 main: org.viirless.smartban.BanPlugin
 api-version: '1.21'
 
@@ -19,6 +19,12 @@ commands:
   unmute:
     description: Unmute a player
     usage: /unmute <player>
+  history:
+    description: View a player's ban and mute history
+    usage: /history <player>
+  smartbans:
+    description: Reload the plugin configuration
+    usage: /smartbans reload
 
 permissions:
   banplugin.ban:
@@ -39,6 +45,12 @@ permissions:
   banplugin.bypass:
     description: Prevents being banned, kicked or muted by other staff members
     default: op
+  banplugin.history:
+    description: Allows viewing ban and mute history of players
+    default: op
+  banplugin.reload:
+    description: Allows reloading the plugin configuration
+    default: op
   banplugin.admin:
     description: Grants all administrative permissions
     default: op
@@ -48,6 +60,8 @@ permissions:
       banplugin.kick: true
       banplugin.mute: true
       banplugin.unmute: true
+      banplugin.history: true
+      banplugin.reload: true
   banplugin.*:
     description: Grants all plugin permissions including bypass
     default: op
