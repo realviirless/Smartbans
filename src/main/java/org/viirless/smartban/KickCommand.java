@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import java.util.Set;
+import org.bukkit.command.ConsoleCommandSender;
 
 public class KickCommand implements CommandExecutor {
 
@@ -18,21 +18,40 @@ public class KickCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        // Check permission
-        if (!sender.hasPermission("banplugin.kick")) {
+        // Skip permission check if sender is console
+        if (!(sender instanceof ConsoleCommandSender) && !sender.hasPermission("banplugin.kick")) {
             sender.sendMessage(colorize(plugin.getConfig().getString("messages.no-permission")));
             return true;
         }
 
-        // Check arguments
+        // Show usage if no arguments
+        if (args.length == 0) {
+            showKickUsage(sender);
+            return true;
+        }
+
+        // Need at least player and one word for reason
         if (args.length < 2) {
             sender.sendMessage(colorize(plugin.getConfig().getString("messages.usage-kick")));
             return true;
         }
 
         String playerName = args[0];
+        Player target = Bukkit.getPlayer(playerName);
 
-        // Join all arguments after player name as the reason
+        // Check if player is online
+        if (target == null) {
+            sender.sendMessage(colorize(plugin.getConfig().getString("messages.player-not-online")));
+            return true;
+        }
+
+        // Check bypass permission (skip for console)
+        if (!(sender instanceof ConsoleCommandSender) && target.hasPermission("banplugin.bypass")) {
+            sender.sendMessage(colorize(plugin.getConfig().getString("messages.cannot-kick-staff")));
+            return true;
+        }
+
+        // Combine all arguments after player name for reason
         StringBuilder reasonBuilder = new StringBuilder();
         for (int i = 1; i < args.length; i++) {
             reasonBuilder.append(args[i]);
@@ -42,20 +61,7 @@ public class KickCommand implements CommandExecutor {
         }
         String reason = reasonBuilder.toString();
 
-        // Get online player
-        Player target = Bukkit.getPlayer(playerName);
-        if (target == null) {
-            sender.sendMessage(colorize(plugin.getConfig().getString("messages.player-not-online")));
-            return true;
-        }
-
-        // Check if target has kick bypass permission
-        if (target.hasPermission("banplugin.kick.bypass")) {
-            sender.sendMessage(colorize(plugin.getConfig().getString("messages.cannot-kick-staff")));
-            return true;
-        }
-
-        // Kick the player
+        // Kick player
         String kickMessage = plugin.getConfig().getString("messages.player-kicked")
                 .replace("{reason}", reason);
         target.kickPlayer(colorize(kickMessage));
@@ -67,6 +73,22 @@ public class KickCommand implements CommandExecutor {
         sender.sendMessage(colorize(successMessage));
 
         return true;
+    }
+
+    private void showKickUsage(CommandSender sender) {
+        String divider = plugin.getConfig().getString("usage-format.divider");
+        String header = plugin.getConfig().getString("usage-format.kick-command.header");
+        String listHeader = plugin.getConfig().getString("usage-format.kick-command.list-header");
+        String info = plugin.getConfig().getString("usage-format.kick-command.info");
+        String example = plugin.getConfig().getString("usage-format.kick-command.example");
+
+        sender.sendMessage(colorize(divider));
+        sender.sendMessage(colorize(header));
+        sender.sendMessage(colorize(divider));
+        sender.sendMessage(colorize(listHeader));
+        sender.sendMessage(colorize(info));
+        sender.sendMessage(colorize(example));
+        sender.sendMessage(colorize(divider));
     }
 
     private String colorize(String message) {
