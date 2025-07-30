@@ -1,0 +1,51 @@
+# Ban Plugin Configuration
+# Configure ban reasons, durations, and IDs
+
+bans:
+  1:
+    reason: "Cheating/Hacking"
+    duration: "30d"
+  2:
+    reason: "Griefing"
+    duration: "7d"
+  3:
+    reason: "Spam/Advertising"
+    duration: "1h"
+  4:
+    reason: "Toxic Behavior"
+    duration: "3d"
+  5:
+    reason: "Exploiting"
+    duration: "14d"
+  6:
+    reason: "Inappropriate Username"
+    duration: "1d"
+  7:
+    reason: "Ban Evasion"
+    duration: "60d"
+  8:
+    reason: "Staff Disrespect"
+    duration: "2d"
+
+# Duration format:
+# s = seconds, m = minutes, h = hours, d = days
+# Examples: 30s, 5m, 2h, 7d
+
+# Messages
+messages:
+  ban-success: "&aSuccessfully banned &c{player} &afor &e{reason} &afor &c{duration}"
+  unban-success: "&aSuccessfully unbanned &c{player}"
+  kick-success: "&aSuccessfully kicked &c{player} &afor &e{reason}"
+  player-not-found: "&cPlayer not found!"
+  player-not-online: "&cPlayer is not online!"
+  invalid-ban-id: "&cInvalid ban ID! Available IDs: {ids}"
+  no-permission: "&cYou don't have permission to use this command!"
+  player-banned: "&cYou are banned from this server!\n&cReason: &e{reason}\n&cExpires: &e{expires}"
+  player-kicked: "&cYou have been kicked from the server!\n&cReason: &e{reason}"
+  already-banned: "&c{player} is already banned!"
+  not-banned: "&c{player} is not banned!"
+  cannot-ban-staff: "&cYou cannot ban this player - they have bypass permission!"
+  cannot-kick-staff: "&cYou cannot kick this player - they have bypass permission!"
+  usage-ban: "&cUsage: /ban <player> <id>"
+  usage-unban: "&cUsage: /unban <player>"
+  usage-kick: "&cUsage: /kick <player> <reason>"
