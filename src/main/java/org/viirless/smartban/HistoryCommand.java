@@ -29,7 +29,7 @@ public class HistoryCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "Dieser Befehl kann nur von Spielern ausgeführt werden!");
+            sender.sendMessage(ChatColor.RED + "This command can only be executed by players!");
             return true;
         }
 
