@@ -1,5 +1,5 @@
 name: Smartbans
-version: 'BETA 1.3'
+version: 'BETA-1.3'
 main: org.viirless.smartban.BanPlugin
 api-version: '1.21'
 
