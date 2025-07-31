@@ -1,4 +1,4 @@
-package org.viirless.smartban;
+package org.viirless.smartban.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.viirless.smartban.BanPlugin;
 
 public class MuteCommand implements CommandExecutor {
     private final BanPlugin plugin;
@@ -22,7 +23,8 @@ public class MuteCommand implements CommandExecutor {
         // Skip permission check if sender is console
         if (!(sender instanceof ConsoleCommandSender) && !sender.hasPermission("banplugin.mute")) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                plugin.getConfig().getString("messages.no-permission", "&cYou don't have permission to use this command!")));
+                    plugin.getConfig().getString("messages.no-permission",
+                            "&cYou don't have permission to use this command!")));
             return true;
         }
 
@@ -33,7 +35,7 @@ public class MuteCommand implements CommandExecutor {
 
         if (args.length < 2) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                plugin.getConfig().getString("messages.usage-mute")));
+                    plugin.getConfig().getString("messages.usage-mute")));
             return true;
         }
 
@@ -42,7 +44,7 @@ public class MuteCommand implements CommandExecutor {
         // Prevent players from muting themselves
         if (sender instanceof Player && playerName.equalsIgnoreCase(((Player) sender).getName())) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                plugin.getConfig().getString("messages.cannot-target-self")));
+                    plugin.getConfig().getString("messages.cannot-target-self")));
             return true;
         }
 
@@ -66,7 +68,7 @@ public class MuteCommand implements CommandExecutor {
             // Using ID system
             if (!mutes.contains(input)) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    plugin.getConfig().getString("messages.invalid-mute-id")));
+                        plugin.getConfig().getString("messages.invalid-mute-id")));
                 return true;
             }
             muteId = input;
@@ -82,26 +84,27 @@ public class MuteCommand implements CommandExecutor {
 
             if (muteId == null) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    "&cInvalid mute reason! Use TAB to see available reasons."));
+                        "&cInvalid mute reason! Use TAB to see available reasons."));
                 return true;
             }
         }
 
         OfflinePlayer target = Bukkit.getOfflinePlayer(playerName);
 
-        // Only check for bypass permission if target is online and sender is not console
+        // Only check for bypass permission if target is online and sender is not
+        // console
         if (target.isOnline()) {
             Player onlineTarget = (Player) target;
             if (onlineTarget.hasPermission("banplugin.bypass") || onlineTarget.isOp()) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                    plugin.getConfig().getString("messages.staff-bypass")));
+                        plugin.getConfig().getString("messages.staff-bypass")));
                 return true;
             }
         }
 
         if (plugin.getBansConfig().contains("muted-players." + target.getUniqueId().toString())) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                plugin.getConfig().getString("messages.already-muted").replace("{player}", target.getName())));
+                    plugin.getConfig().getString("messages.already-muted").replace("{player}", target.getName())));
             return true;
         }
 
@@ -112,12 +115,11 @@ public class MuteCommand implements CommandExecutor {
 
         // Add to history
         plugin.addToHistory(
-            target.getUniqueId().toString(),
-            "MUTE",
-            sender.getName(),
-            reason,
-            durationMs
-        );
+                target.getUniqueId().toString(),
+                "MUTE",
+                sender.getName(),
+                reason,
+                durationMs);
 
         // Save mute in config
         String mutePath = "muted-players." + target.getUniqueId().toString();
@@ -128,22 +130,23 @@ public class MuteCommand implements CommandExecutor {
         plugin.saveBansConfig();
 
         // Debug output
-        plugin.getLogger().info("Muting player " + target.getName() + " (UUID: " + target.getUniqueId().toString() + ")");
+        plugin.getLogger()
+                .info("Muting player " + target.getName() + " (UUID: " + target.getUniqueId().toString() + ")");
         plugin.getLogger().info("Mute data: reason=" + reason + ", expires=" + expiryTime);
 
         // Reload the config to ensure it's saved
         plugin.reloadBansConfig();
 
         String muteMessage = plugin.getConfig().getString("messages.mute-success")
-            .replace("{player}", target.getName())
-            .replace("{reason}", reason)
-            .replace("{duration}", duration);
+                .replace("{player}", target.getName())
+                .replace("{reason}", reason)
+                .replace("{duration}", duration);
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', muteMessage));
 
         if (target.isOnline()) {
             String playerMessage = plugin.getConfig().getString("messages.player-muted")
-                .replace("{reason}", reason)
-                .replace("{expires}", duration);
+                    .replace("{reason}", reason)
+                    .replace("{expires}", duration);
             target.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', playerMessage));
         }
 
@@ -154,17 +157,19 @@ public class MuteCommand implements CommandExecutor {
         String divider = plugin.getConfig().getString("usage-format.divider", "&7&m--------------------------------");
         boolean useIdSystem = plugin.getConfig().getBoolean("settings.use-id-system.mute", true);
 
-        String header = useIdSystem ?
-            plugin.getConfig().getString("usage-format.mute-command.header", "&cUsage: &7/mute <player> <mute-id>") :
-            "&cUsage: &7/mute <player> <reason>";
+        String header = useIdSystem
+                ? plugin.getConfig().getString("usage-format.mute-command.header",
+                        "&cUsage: &7/mute <player> <mute-id>")
+                : "&cUsage: &7/mute <player> <reason>";
 
-        String listHeader = useIdSystem ?
-            plugin.getConfig().getString("usage-format.mute-command.list-header", "&cAvailable Mute IDs:") :
-            "&cAvailable Mute Reasons:";
+        String listHeader = useIdSystem
+                ? plugin.getConfig().getString("usage-format.mute-command.list-header", "&cAvailable Mute IDs:")
+                : "&cAvailable Mute Reasons:";
 
-        String format = useIdSystem ?
-            plugin.getConfig().getString("usage-format.mute-command.format", "&7ID: &c{id} &7| Reason: &c{reason} &7| Duration: &c{duration}") :
-            "&7Reason: &c{reason} &7| Duration: &c{duration}";
+        String format = useIdSystem
+                ? plugin.getConfig().getString("usage-format.mute-command.format",
+                        "&7ID: &c{id} &7| Reason: &c{reason} &7| Duration: &c{duration}")
+                : "&7Reason: &c{reason} &7| Duration: &c{duration}";
 
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', divider));
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', header));
@@ -177,9 +182,9 @@ public class MuteCommand implements CommandExecutor {
                 String reason = mutes.getString(id + ".reason");
                 String duration = mutes.getString(id + ".duration");
                 String line = format
-                    .replace("{id}", id)
-                    .replace("{reason}", reason)
-                    .replace("{duration}", duration);
+                        .replace("{id}", id)
+                        .replace("{reason}", reason)
+                        .replace("{duration}", duration);
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', line));
             }
         }
@@ -188,7 +193,8 @@ public class MuteCommand implements CommandExecutor {
     }
 
     private long parseDuration(String duration) {
-        if (duration == null) return 0;
+        if (duration == null)
+            return 0;
 
         long multiplier;
         if (duration.endsWith("s")) {

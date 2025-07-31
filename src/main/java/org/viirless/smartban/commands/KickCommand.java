@@ -1,4 +1,4 @@
-package org.viirless.smartban;
+package org.viirless.smartban.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -6,6 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.viirless.smartban.BanPlugin;
 
 public class KickCommand implements CommandExecutor {
     private final BanPlugin plugin;
@@ -48,7 +49,8 @@ public class KickCommand implements CommandExecutor {
         StringBuilder reason = new StringBuilder();
         for (int i = 1; i < args.length; i++) {
             reason.append(args[i]);
-            if (i < args.length - 1) reason.append(" ");
+            if (i < args.length - 1)
+                reason.append(" ");
         }
 
         // Kick the player

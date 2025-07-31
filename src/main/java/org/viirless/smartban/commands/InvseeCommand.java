@@ -1,4 +1,4 @@
-package org.viirless.smartban;
+package org.viirless.smartban.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
+import org.viirless.smartban.BanPlugin;
 
 public class InvseeCommand implements CommandExecutor, Listener {
     private final BanPlugin plugin;
@@ -73,7 +74,8 @@ public class InvseeCommand implements CommandExecutor, Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player)) return;
+        if (!(event.getWhoClicked() instanceof Player))
+            return;
 
         // Check if this is an invsee inventory
         if (event.getInventory().equals(event.getWhoClicked().getOpenInventory().getTopInventory()) &&
@@ -89,7 +91,8 @@ public class InvseeCommand implements CommandExecutor, Listener {
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
-        if (!(event.getWhoClicked() instanceof Player)) return;
+        if (!(event.getWhoClicked() instanceof Player))
+            return;
 
         // Check if this is an invsee inventory
         if (event.getInventory().equals(event.getWhoClicked().getOpenInventory().getTopInventory()) &&

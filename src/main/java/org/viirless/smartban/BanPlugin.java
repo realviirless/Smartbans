@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import org.viirless.smartban.commands.*;
+import org.viirless.smartban.listeners.*;
 import org.bukkit.scheduler.BukkitTask;
 
 public class BanPlugin extends JavaPlugin {
