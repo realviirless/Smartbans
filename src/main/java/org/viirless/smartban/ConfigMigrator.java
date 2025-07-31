@@ -6,7 +6,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 public class ConfigMigrator {
     private final BanPlugin plugin;
     private static final String CONFIG_VERSION = "config-version";
-    private static final double CURRENT_VERSION = 1.1; // Updated version
+    private static final double CURRENT_VERSION = 1.2; // Increment version number
 
     public ConfigMigrator(BanPlugin plugin) {
         this.plugin = plugin;
@@ -25,25 +25,31 @@ public class ConfigMigrator {
         if (version < CURRENT_VERSION) {
             plugin.getLogger().info("Migrating config.yml from version " + version + " to " + CURRENT_VERSION);
 
-            // Example of a migration:
-            if (version < 1.0) {
-                // Migrate old messages to new format if needed
-                if (config.contains("messages.ban")) {
-                    String oldBanMessage = config.getString("messages.ban");
-                    config.set("messages.ban-success", oldBanMessage);
-                    config.set("messages.ban", null);
-                }
-            }
-
-            // Set default values for new configuration options
-            if (!config.contains("messages.vanish.actionbar")) {
-                config.set("messages.vanish.actionbar", "&aVanish &a✔");
-            }
+            // Add all possible config entries with default values if they don't exist
+            addDefaultIfMissing(config, "messages.ban-success", "&cPlayer &e{player} &chas been banned for &e{reason}");
+            addDefaultIfMissing(config, "messages.unban-success", "&aPlayer &e{player} &ahas been unbanned");
+            addDefaultIfMissing(config, "messages.mute-success", "&cPlayer &e{player} &chas been muted for &e{reason}");
+            addDefaultIfMissing(config, "messages.unmute-success", "&aPlayer &e{player} &ahas been unmuted");
+            addDefaultIfMissing(config, "messages.no-permission", "&cYou don't have permission to use this command!");
+            addDefaultIfMissing(config, "messages.player-not-found", "&cPlayer not found!");
+            addDefaultIfMissing(config, "messages.freeze.title", "&c&lYOU ARE FROZEN");
+            addDefaultIfMissing(config, "messages.freeze.subtitle", "&eContact staff in Discord");
+            addDefaultIfMissing(config, "messages.freeze.bypass", "&cThis player has bypass permissions!");
+            addDefaultIfMissing(config, "messages.freeze.cannot-freeze-self", "&cYou cannot freeze yourself!");
+            addDefaultIfMissing(config, "messages.vanish.actionbar", "&aVanish &a✔");
+            addDefaultIfMissing(config, "messages.reload-success", "&aConfiguration reloaded successfully!");
 
             // Update version
             config.set(CONFIG_VERSION, CURRENT_VERSION);
             plugin.saveConfig();
             plugin.getLogger().info("Config migration complete!");
+        }
+    }
+
+    private void addDefaultIfMissing(FileConfiguration config, String path, Object defaultValue) {
+        if (!config.contains(path)) {
+            config.set(path, defaultValue);
+            plugin.getLogger().info("Added missing config entry: " + path);
         }
     }
 

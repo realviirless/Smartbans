@@ -1,0 +1,76 @@
+# SmartBans Commands List
+# This file is for information purposes only
+
+Moderation Commands:
+  /ban:
+    usage: "/ban <player> <id>"
+    description: "Bans a player using the configured ban IDs"
+    permission: "banplugin.ban"
+
+  /unban:
+    usage: "/unban <player>"
+    description: "Removes a player's ban"
+    permission: "banplugin.unban"
+
+  /mute:
+    usage: "/mute <player> <id>"
+    description: "Mutes a player using the configured mute IDs"
+    permission: "banplugin.mute"
+
+  /unmute:
+    usage: "/unmute <player>"
+    description: "Removes a player's mute"
+    permission: "banplugin.unmute"
+
+  /kick:
+    usage: "/kick <player> <reason>"
+    description: "Kicks a player with a custom reason"
+    permission: "banplugin.kick"
+
+History Command:
+  /history:
+    usage: "/history <player>"
+    description: "Shows a GUI with all punishments of a player"
+    permission: "banplugin.history"
+
+Freeze Commands:
+  /freeze:
+    usage: "/freeze <player>"
+    description: "Freezes a player in place with a warning title"
+    permission: "banplugin.freeze"
+
+  /unfreeze:
+    usage: "/unfreeze <player>"
+    description: "Unfreezes a previously frozen player"
+    permission: "banplugin.unfreeze"
+
+Player Examination:
+  /examine:
+    usage: "/examine <player>"
+    description: "Opens a GUI showing detailed player information"
+    permission: "banplugin.examine"
+
+Vanish Command:
+  /vanish:
+    usage: "/vanish"
+    aliases: ["/v"]
+    description: "Toggles vanish mode for yourself"
+    permission: "banplugin.vanish"
+
+Inventory Commands:
+  /invsee:
+    usage: "/invsee <player>"
+    description: "View or modify a player's inventory"
+    permission: "banplugin.invsee"
+    note: "Requires banplugin.invsee.modify to edit items"
+
+  /clearinv:
+    usage: "/clearinv [player]"
+    description: "Clears your inventory or another player's inventory"
+    permission: "banplugin.clearinv"
+
+Configuration Command:
+  /smartbans:
+    usage: "/smartbans reload"
+    description: "Reloads the plugin configuration"
+    permission: "banplugin.reload"

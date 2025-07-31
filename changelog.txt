@@ -21,3 +21,4 @@
 - Added config-version field to config.yml, bans.yml, and history.yml
 - Added ConfigMigrator for automatic data updates
 - Improved history data structure with status tracking
+
