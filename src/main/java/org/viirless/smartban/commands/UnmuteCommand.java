@@ -1,4 +1,4 @@
-package org.viirless.smartban;
+package org.viirless.smartban.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.viirless.smartban.BanPlugin;
 
 public class UnmuteCommand implements CommandExecutor {
 
@@ -23,13 +24,14 @@ public class UnmuteCommand implements CommandExecutor {
         // Skip permission check if sender is console
         if (!(sender instanceof ConsoleCommandSender) && !sender.hasPermission("banplugin.unmute")) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                plugin.getConfig().getString("messages.no-permission", "&cYou don't have permission to use this command!")));
+                    plugin.getConfig().getString("messages.no-permission",
+                            "&cYou don't have permission to use this command!")));
             return true;
         }
 
         if (args.length < 1) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                plugin.getConfig().getString("messages.usage-unmute", "&cUsage: /unmute <player>")));
+                    plugin.getConfig().getString("messages.usage-unmute", "&cUsage: /unmute <player>")));
             return true;
         }
 
@@ -49,7 +51,7 @@ public class UnmuteCommand implements CommandExecutor {
             for (String timestamp : history.getKeys(false)) {
                 ConfigurationSection entry = history.getConfigurationSection(timestamp);
                 if (entry != null && entry.getString("type").equals("MUTE")
-                    && entry.getString("status", "").equals("Active")) {
+                        && entry.getString("status", "").equals("Active")) {
                     plugin.updatePunishmentStatus(uuid, Long.parseLong(timestamp), true);
                     break;
                 }
@@ -61,8 +63,9 @@ public class UnmuteCommand implements CommandExecutor {
         plugin.saveBansConfig();
 
         // Send success messages
-        String unmuteMessage = plugin.getConfig().getString("messages.unmute-success", "&aSuccessfully unmuted {player}")
-            .replace("{player}", playerName);
+        String unmuteMessage = plugin.getConfig()
+                .getString("messages.unmute-success", "&aSuccessfully unmuted {player}")
+                .replace("{player}", playerName);
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', unmuteMessage));
 
         Player target = Bukkit.getPlayer(playerName);

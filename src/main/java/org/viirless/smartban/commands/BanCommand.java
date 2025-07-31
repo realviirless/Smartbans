@@ -1,4 +1,4 @@
-package org.viirless.smartban;
+package org.viirless.smartban.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -7,6 +7,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.viirless.smartban.BanPlugin;
+
 import java.util.Date;
 import java.util.Set;
 import org.bukkit.configuration.ConfigurationSection;
@@ -114,12 +116,11 @@ public class BanCommand implements CommandExecutor {
 
         // Add to history
         plugin.addToHistory(
-            target.getUniqueId().toString(),
-            "BAN",
-            banner,
-            reason,
-            duration
-        );
+                target.getUniqueId().toString(),
+                "BAN",
+                banner,
+                reason,
+                duration);
 
         // Save ban in config
         String banPath = "banned-players." + target.getUniqueId().toString();
@@ -153,17 +154,18 @@ public class BanCommand implements CommandExecutor {
         String divider = plugin.getConfig().getString("usage-format.divider", "&7&m--------------------------------");
         boolean useIdSystem = plugin.getConfig().getBoolean("settings.use-id-system.ban", true);
 
-        String header = useIdSystem ?
-            plugin.getConfig().getString("usage-format.ban-command.header", "&cUsage: &7/ban <player> <ban-id>") :
-            "&cUsage: &7/ban <player> <reason>";
+        String header = useIdSystem
+                ? plugin.getConfig().getString("usage-format.ban-command.header", "&cUsage: &7/ban <player> <ban-id>")
+                : "&cUsage: &7/ban <player> <reason>";
 
-        String listHeader = useIdSystem ?
-            plugin.getConfig().getString("usage-format.ban-command.list-header", "&cAvailable Ban IDs:") :
-            "&cAvailable Ban Reasons:";
+        String listHeader = useIdSystem
+                ? plugin.getConfig().getString("usage-format.ban-command.list-header", "&cAvailable Ban IDs:")
+                : "&cAvailable Ban Reasons:";
 
-        String format = useIdSystem ?
-            plugin.getConfig().getString("usage-format.ban-command.format", "&7ID: &c{id} &7| Reason: &c{reason} &7| Duration: &c{duration}") :
-            "&7Reason: &c{reason} &7| Duration: &c{duration}";
+        String format = useIdSystem
+                ? plugin.getConfig().getString("usage-format.ban-command.format",
+                        "&7ID: &c{id} &7| Reason: &c{reason} &7| Duration: &c{duration}")
+                : "&7Reason: &c{reason} &7| Duration: &c{duration}";
 
         sender.sendMessage(colorize(divider));
         sender.sendMessage(colorize(header));
@@ -175,9 +177,9 @@ public class BanCommand implements CommandExecutor {
                 String reason = plugin.getConfig().getString("bans." + id + ".reason");
                 String duration = plugin.getConfig().getString("bans." + id + ".duration");
                 String line = format
-                    .replace("{id}", id)
-                    .replace("{reason}", reason)
-                    .replace("{duration}", duration);
+                        .replace("{id}", id)
+                        .replace("{reason}", reason)
+                        .replace("{duration}", duration);
                 sender.sendMessage(colorize(line));
             }
         }
@@ -210,7 +212,8 @@ public class BanCommand implements CommandExecutor {
                 case "d":
                     return value * 24 * 60 * 60 * 1000;
                 default:
-                    plugin.getLogger().warning("Invalid duration format in config: " + duration + ". Using permanent ban.");
+                    plugin.getLogger()
+                            .warning("Invalid duration format in config: " + duration + ". Using permanent ban.");
                     return -1;
             }
         } catch (NumberFormatException | StringIndexOutOfBoundsException e) {

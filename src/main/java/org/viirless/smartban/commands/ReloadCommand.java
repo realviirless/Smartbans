@@ -1,9 +1,10 @@
-package org.viirless.smartban;
+package org.viirless.smartban.commands;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.viirless.smartban.BanPlugin;
 
 public class ReloadCommand implements CommandExecutor {
     private final BanPlugin plugin;

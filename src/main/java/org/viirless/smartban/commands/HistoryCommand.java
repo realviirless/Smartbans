@@ -1,4 +1,4 @@
-package org.viirless.smartban;
+package org.viirless.smartban.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.viirless.smartban.BanPlugin;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,7 +48,8 @@ public class HistoryCommand implements CommandExecutor {
         Player player = (Player) sender;
         String targetName = args[0];
         Player target = Bukkit.getPlayer(targetName);
-        String uuid = target != null ? target.getUniqueId().toString() : Bukkit.getOfflinePlayer(targetName).getUniqueId().toString();
+        String uuid = target != null ? target.getUniqueId().toString()
+                : Bukkit.getOfflinePlayer(targetName).getUniqueId().toString();
 
         ConfigurationSection history = plugin.getHistoryConfig().getConfigurationSection(uuid);
         if (history == null || history.getKeys(false).isEmpty()) {
@@ -64,21 +66,26 @@ public class HistoryCommand implements CommandExecutor {
                 plugin.getConfig().getString("messages.history.title").replace("{player}", targetName)));
 
         ConfigurationSection history = plugin.getHistoryConfig().getConfigurationSection(uuid);
-        if (history == null) return;
+        if (history == null)
+            return;
 
         int slot = 0;
         for (String timestamp : history.getKeys(false)) {
-            if (slot >= 54) break;
+            if (slot >= 54)
+                break;
 
             ConfigurationSection entry = history.getConfigurationSection(timestamp);
-            if (entry == null) continue;
+            if (entry == null)
+                continue;
 
             ItemStack item = new ItemStack(Material.PAPER);
             ItemMeta meta = item.getItemMeta();
-            if (meta == null) continue;
+            if (meta == null)
+                continue;
 
             String type = entry.getString("type", "UNKNOWN");
-            meta.setDisplayName(plugin.colorize(plugin.getConfig().getString("messages.history.entry." + type.toLowerCase())));
+            meta.setDisplayName(
+                    plugin.colorize(plugin.getConfig().getString("messages.history.entry." + type.toLowerCase())));
 
             List<String> lore = new ArrayList<>();
             lore.add(plugin.colorize(plugin.getConfig().getString("messages.history.entry.by")
@@ -113,7 +120,8 @@ public class HistoryCommand implements CommandExecutor {
     }
 
     private String formatTime(long millis) {
-        if (millis < 0) return "0 seconds";
+        if (millis < 0)
+            return "0 seconds";
 
         long days = TimeUnit.MILLISECONDS.toDays(millis);
         millis -= TimeUnit.DAYS.toMillis(days);
@@ -124,10 +132,14 @@ public class HistoryCommand implements CommandExecutor {
         long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
 
         StringBuilder sb = new StringBuilder();
-        if (days > 0) sb.append(days).append("d ");
-        if (hours > 0) sb.append(hours).append("h ");
-        if (minutes > 0) sb.append(minutes).append("m ");
-        if (seconds > 0) sb.append(seconds).append("s");
+        if (days > 0)
+            sb.append(days).append("d ");
+        if (hours > 0)
+            sb.append(hours).append("h ");
+        if (minutes > 0)
+            sb.append(minutes).append("m ");
+        if (seconds > 0)
+            sb.append(seconds).append("s");
 
         return sb.toString().trim();
     }

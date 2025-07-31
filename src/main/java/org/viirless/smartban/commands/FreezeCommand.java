@@ -1,10 +1,11 @@
-package org.viirless.smartban;
+package org.viirless.smartban.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.viirless.smartban.BanPlugin;
 
 public class FreezeCommand implements CommandExecutor {
     private final BanPlugin plugin;
@@ -61,8 +62,7 @@ public class FreezeCommand implements CommandExecutor {
                 plugin.colorize(subtitle),
                 10,
                 Integer.MAX_VALUE,
-                20
-        );
+                20);
 
         return true;
     }

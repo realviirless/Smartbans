@@ -1,4 +1,4 @@
-package org.viirless.smartban;
+package org.viirless.smartban.commands;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.viirless.smartban.BanPlugin;
 
 public class VanishCommand implements CommandExecutor {
     private final BanPlugin plugin;

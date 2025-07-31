@@ -1,4 +1,4 @@
-package org.viirless.smartban;
+package org.viirless.smartban.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.viirless.smartban.BanPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,10 @@ public class BanTabCompleter implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         List<String> completions = new ArrayList<>();
+
+        if (!sender.hasPermission("banplugin.ban")) {
+            return completions;
+        }
 
         if (args.length == 1) {
             String input = args[0].toLowerCase();
@@ -41,15 +46,15 @@ public class BanTabCompleter implements TabCompleter {
                 if (useIdSystem) {
                     // ID-System: Zeige IDs
                     completions.addAll(reasons.getKeys(false).stream()
-                        .filter(id -> id.startsWith(input) ||
+                            .filter(id -> id.startsWith(input) ||
                                     reasons.getString(id + ".reason", "").toLowerCase().startsWith(input))
-                        .collect(Collectors.toList()));
+                            .collect(Collectors.toList()));
                 } else {
                     // Direktes System: Zeige Gründe
                     completions.addAll(reasons.getKeys(false).stream()
-                        .map(id -> reasons.getString(id + ".reason"))
-                        .filter(reason -> reason != null && reason.toLowerCase().startsWith(input))
-                        .collect(Collectors.toList()));
+                            .map(id -> reasons.getString(id + ".reason"))
+                            .filter(reason -> reason != null && reason.toLowerCase().startsWith(input))
+                            .collect(Collectors.toList()));
                 }
             }
         }
