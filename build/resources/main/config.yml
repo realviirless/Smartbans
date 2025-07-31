@@ -1,5 +1,5 @@
 # SmartBans Configuration File DO NOT EDIT THIS VERSION MANUALLY
-config-version: 1.0
+config-version: 1.5
 
 # Ban Plugin Configuration
 # Configure ban reasons, durations, and IDs
@@ -52,10 +52,6 @@ mutes:
     reason: "Toxic Behavior"
     duration: "3d"
 
-# Duration format:
-# s = seconds, m = minutes, h = hours, d = days
-# Examples: 30s, 5m, 2h, 7d
-
 # Messages
 messages:
   ban-success: "&aSuccessfully banned &c{player} &afor &e{reason} &afor &c{duration}"
@@ -95,9 +91,12 @@ messages:
       duration:
         permanent: "&7Duration: &fPermanent"
         temporary: "&7Duration: &f{duration}"
-  invalid-player: "&cPlease enter a valid player name"
-  history-usage: "&cUsage: /history <player>"
-  reload-success: "&aConfiguration successfully reloaded!"
+  chat:
+    locked: "&cThe chat has been locked by &e{staff}"
+    unlocked: "&aThe chat has been unlocked by &e{staff}"
+    no-permission-write: "&cThe chat is currently locked. Only staff members can write."
+    already-locked: "&cThe chat is already locked!"
+    already-unlocked: "&cThe chat is already unlocked!"
   freeze:
     title:
       main: "&cYou have been frozen!"
@@ -107,50 +106,14 @@ messages:
     not-frozen: "&cThis player is not frozen"
     unfrozen: "&aYou have been unfrozen"
     unfrozen-by: "&aYou have unfrozen {player}"
-  freeze-usage: "&cUsage: /freeze <player>"
-  unfreeze-usage: "&cUsage: /unfreeze <player>"
-  cannot-target-self: "&cYou cannot target yourself!"
-  staff-bypass: "&cYou cannot target this player - they have bypass permission!"
-  examine:
-    title: "&8Examining {player}"
-    usage: "&cUsage: /examine <player>"
-    offline: "&cPlayer must be online to be examined"
-    info:
-      name: "&7Name: &f{name}"
-      uuid: "&7UUID: &f{uuid}"
-      ip: "&7IP: &f{ip}"
-      location: "&7Location: &f{world}, {x}, {y}, {z}"
-      gamemode: "&7Gamemode: &f{gamemode}"
-      health: "&7Health: &f{health}/20"
-      food: "&7Food: &f{food}/20"
-      exp: "&7Experience: &f{exp}"
-      op: "&7Operator: &f{op}"
   vanish:
     enabled: "&aVanish mode enabled"
     disabled: "&cVanish mode disabled"
     actionbar: "&7Vanish &a✔"
-  invsee:
-    usage: "&cUsage: /invsee <player>"
-    opened: "&aViewing inventory of &e{player}"
-    view-only: "&cYou are in view-only mode. You cannot modify this inventory."
-  clearinv:
-    usage: "&cUsage: /clearinv [player]"
-    cleared-self: "&aYour inventory has been cleared"
-    cleared-other: "&aCleared inventory of &e{player}"
-    cleared-by: "&cYour inventory has been cleared by &e{staff}"
-
-usage-format:
-  divider: "&7&m--------------------------------"
-  ban-command:
-    header: "&cUsage: &7/ban <player> <ban-id>"
-    list-header: "&cAvailable Ban IDs:"
-    format: "&7ID: &c{id} &7| Reason: &c{reason} &7| Duration: &c{duration}"
-  mute-command:
-    header: "&cUsage: &7/mute <player> <mute-id>"
-    list-header: "&cAvailable Mute IDs:"
-    format: "&7ID: &c{id} &7| Reason: &c{reason} &7| Duration: &c{duration}"
-  kick-command:
-    header: "&cUsage: &7/kick <player> <reason>"
-    list-header: "&cKick Command Help:"
-    info: "&7Write your custom kick reason after the player name."
-    example: "&7Example: &c/kick Player1 Breaking the rules"
+  examine:
+    title: "&8Examining {player}"
+    usage: "&cUsage: /examine <player>"
+    offline: "&cPlayer must be online to be examined"
+  reload-success: "&aConfiguration successfully reloaded!"
+  cannot-target-self: "&cYou cannot target yourself!"
+  staff-bypass: "&cYou cannot target this player - they have bypass permission!"

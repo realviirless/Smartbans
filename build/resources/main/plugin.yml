@@ -1,5 +1,5 @@
 name: Smartbans
-version: 'BETA 1.5.1'
+version: 'BETA 1.5.2'
 main: org.viirless.smartban.BanPlugin
 api-version: '1.21'
 
@@ -45,6 +45,14 @@ commands:
     description: Clear a player's inventory
     usage: /clearinv [player]
     aliases: [ci]
+  lockchat:
+    description: Lock the chat so only staff can write
+    usage: /lockchat
+    aliases: [lc]
+  unlockchat:
+    description: Unlock the chat
+    usage: /unlockchat
+    aliases: [ulc]
 
 permissions:
   banplugin.ban:
@@ -116,6 +124,12 @@ permissions:
     default: op
   banplugin.clearinv.bypass:
     description: Prevents inventory from being cleared
+    default: op
+  banplugin.lockchat:
+    description: Allows locking and unlocking the chat
+    default: op
+  banplugin.lockchat.bypass:
+    description: Allows writing in chat while it's locked
     default: op
   banplugin.*:
     description: Grants all plugin permissions including bypass
