@@ -81,6 +81,11 @@ public class ConfigMigrator {
             plugin.getLogger().info("Added settings.mute-notifications.message");
             madeChanges = true;
         }
+
+        // General messages that should be at root level
+        madeChanges |= checkAndAddMessage(config, "messages.reload-success", "&aConfiguration successfully reloaded!");
+        madeChanges |= checkAndAddMessage(config, "messages.cannot-target-self", "&cYou cannot target yourself!");
+        madeChanges |= checkAndAddMessage(config, "messages.staff-bypass", "&cYou cannot target this player - they have bypass permission!");
     }
 
     private void migrateBanReasons(FileConfiguration config) {

@@ -178,6 +178,10 @@ messages:
       list-header: "&cKick Command Help:"
       info: "&7Write your custom kick reason after the player name."
       example: "&7Example: &c/kick Player1 Breaking the rules"
+  # General messages
+  reload-success: "&aConfiguration successfully reloaded!"
+  cannot-target-self: "&cYou cannot target yourself!"
+  staff-bypass: "&cYou cannot target this player - they have bypass permission!"
 
   # Success messages
   ban-success: "&aSuccessfully banned &c{player} &afor &e{reason} &afor &c{duration}"
