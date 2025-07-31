@@ -7,3 +7,11 @@
 copilotDiffState.xml
 /.idea/copilotDiffState.xml
 .idea/copilotDiffState.xml
+# Project exclude paths
+/.gradle/
+/build/
+/build/classes/java/main/
+copilotDiffState.xml
+/.idea/copilotDiffState.xml
+.idea/copilotDiffState.xml
+

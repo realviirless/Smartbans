@@ -1,0 +1,43 @@
+# SmartBans Changelog
+
+## BETA-1.5 (31.07.2025)
+
+### New Commands
+- `/clearinv [player]` (alias: `/ci`) - Clear your own or another player's inventory
+- `/vanish` (alias: `/v`) - Toggle vanish mode for staff members
+- `/invsee <player>` - View and optionally modify another player's inventory
+- `/examine <player>` - Open a detailed GUI with player information
+
+### New Permissions
+- `banplugin.clearinv` - Allows using /clearinv command
+- `banplugin.clearinv.bypass` - Prevents inventory from being cleared by others
+- `banplugin.vanish` - Allows using vanish mode
+- `banplugin.vanish.see` - Allows seeing other vanished staff members
+- `banplugin.invsee` - Allows viewing other players' inventories
+- `banplugin.invsee.bypass` - Prevents inventory from being viewed by others
+- `banplugin.invsee.modify` - Allows modifying inventories while using invsee
+- `banplugin.examine` - Allows examining detailed player information
+
+### New Features
+- Examine GUI shows:
+  - Player head with name and UUID
+  - Location, IP, and gamemode information
+  - Health, food, XP, and OP status
+  - Quick access to player's punishment history
+- Vanish system with staff visibility options
+- View-only mode for inventory inspection
+- Staff bypass system for all new commands
+
+### Configuration Updates
+- Added new configurable messages:
+  - Examine GUI titles and information
+  - Vanish enable/disable messages
+  - Inventory clear notifications
+  - Invsee view-only warning
+- All messages can be modified in config.yml
+
+### Technical Changes
+- Version updated from BETA-1.4 to BETA-1.5
+- Added new event listeners for inventory handling
+- Improved permission management
+- Better staff protection system
