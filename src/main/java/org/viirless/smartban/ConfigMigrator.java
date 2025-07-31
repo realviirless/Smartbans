@@ -7,9 +7,11 @@ public class ConfigMigrator {
     private final BanPlugin plugin;
     private static final String CONFIG_VERSION = "config-version";
     private static final double CURRENT_VERSION = 1.5;
+    private boolean madeChanges;
 
     public ConfigMigrator(BanPlugin plugin) {
         this.plugin = plugin;
+        this.madeChanges = false;
     }
 
     public void migrateConfigs() {
@@ -22,9 +24,23 @@ public class ConfigMigrator {
         FileConfiguration config = plugin.getConfig();
         double version = config.getDouble(CONFIG_VERSION, 0.0);
         plugin.getLogger().info("Current config version: " + version);
-        boolean madeChanges = false;
+        madeChanges = false;
 
         // Check and add basic settings
+        migrateBasicSettings(config);
+        migrateBanReasons(config);
+        migrateMuteReasons(config);
+        migrateMessages(config);
+
+        if (madeChanges || version < CURRENT_VERSION) {
+            config.set(CONFIG_VERSION, CURRENT_VERSION);
+            plugin.saveConfig();
+            plugin.reloadConfig();
+            plugin.getLogger().info("Config update complete!");
+        }
+    }
+
+    private void migrateBasicSettings(FileConfiguration config) {
         if (!config.isSet("settings.use-id-system.ban")) {
             config.set("settings.use-id-system.ban", true);
             plugin.getLogger().info("Added settings.use-id-system.ban");
@@ -35,7 +51,39 @@ public class ConfigMigrator {
             plugin.getLogger().info("Added settings.use-id-system.mute");
             madeChanges = true;
         }
+        if (!config.isSet("settings.ban-notifications.enabled")) {
+            config.set("settings.ban-notifications.enabled", true);
+            plugin.getLogger().info("Added settings.ban-notifications.enabled");
+            madeChanges = true;
+        }
+        if (!config.isSet("settings.ban-notifications.title")) {
+            config.set("settings.ban-notifications.title", "&cYou have been banned!");
+            plugin.getLogger().info("Added settings.ban-notifications.title");
+            madeChanges = true;
+        }
+        if (!config.isSet("settings.ban-notifications.message")) {
+            config.set("settings.ban-notifications.message", "&cReason: &e{reason}\n&cExpires: &e{expires}");
+            plugin.getLogger().info("Added settings.ban-notifications.message");
+            madeChanges = true;
+        }
+        if (!config.isSet("settings.mute-notifications.enabled")) {
+            config.set("settings.mute-notifications.enabled", true);
+            plugin.getLogger().info("Added settings.mute-notifications.enabled");
+            madeChanges = true;
+        }
+        if (!config.isSet("settings.mute-notifications.title")) {
+            config.set("settings.mute-notifications.title", "&cYou have been muted!");
+            plugin.getLogger().info("Added settings.mute-notifications.title");
+            madeChanges = true;
+        }
+        if (!config.isSet("settings.mute-notifications.message")) {
+            config.set("settings.mute-notifications.message", "&cReason: &e{reason}\n&cExpires: &e{expires}");
+            plugin.getLogger().info("Added settings.mute-notifications.message");
+            madeChanges = true;
+        }
+    }
 
+    private void migrateBanReasons(FileConfiguration config) {
         // Check and add default ban reasons
         if (!config.isSet("bans.1")) {
             config.set("bans.1.reason", "Cheating/Hacking");
@@ -47,7 +95,6 @@ public class ConfigMigrator {
             config.set("bans.2.duration", "7d");
             madeChanges = true;
         }
-        // Add more default ban reasons
         if (!config.isSet("bans.3")) {
             config.set("bans.3.reason", "Spam/Advertising");
             config.set("bans.3.duration", "1h");
@@ -63,7 +110,24 @@ public class ConfigMigrator {
             config.set("bans.5.duration", "14d");
             madeChanges = true;
         }
+        if (!config.isSet("bans.6")) {
+            config.set("bans.6.reason", "Inappropriate Username");
+            config.set("bans.6.duration", "1d");
+            madeChanges = true;
+        }
+        if (!config.isSet("bans.7")) {
+            config.set("bans.7.reason", "Ban Evasion");
+            config.set("bans.7.duration", "60d");
+            madeChanges = true;
+        }
+        if (!config.isSet("bans.8")) {
+            config.set("bans.8.reason", "Staff Disrespect");
+            config.set("bans.8.duration", "2d");
+            madeChanges = true;
+        }
+    }
 
+    private void migrateMuteReasons(FileConfiguration config) {
         // Check and add default mute reasons
         if (!config.isSet("mutes.1")) {
             config.set("mutes.1.reason", "Chat Spam");
@@ -85,8 +149,14 @@ public class ConfigMigrator {
             config.set("mutes.4.duration", "1d");
             madeChanges = true;
         }
+        if (!config.isSet("mutes.5")) {
+            config.set("mutes.5.reason", "Toxic Behavior");
+            config.set("mutes.5.duration", "3d");
+            madeChanges = true;
+        }
+    }
 
-        // Check and add all messages
+    private void migrateMessages(FileConfiguration config) {
         // Basic messages
         madeChanges |= checkAndAddMessage(config, "messages.ban-success", "&aSuccessfully banned &c{player} &afor &e{reason} &afor &c{duration}");
         madeChanges |= checkAndAddMessage(config, "messages.unban-success", "&aSuccessfully unbanned &c{player}");
@@ -95,22 +165,34 @@ public class ConfigMigrator {
         madeChanges |= checkAndAddMessage(config, "messages.player-not-found", "&cPlayer not found!");
         madeChanges |= checkAndAddMessage(config, "messages.player-not-online", "&cPlayer is not online!");
         madeChanges |= checkAndAddMessage(config, "messages.no-permission", "&cYou don't have permission to use this command!");
+        madeChanges |= checkAndAddMessage(config, "messages.invalid-ban-id", "&cInvalid ban ID! Available IDs: {ids}");
+        madeChanges |= checkAndAddMessage(config, "messages.invalid-mute-id", "&cInvalid mute ID! Available IDs: {ids}");
         madeChanges |= checkAndAddMessage(config, "messages.cannot-target-self", "&cYou cannot target yourself!");
         madeChanges |= checkAndAddMessage(config, "messages.staff-bypass", "&cYou cannot target this player - they have bypass permission!");
+        madeChanges |= checkAndAddMessage(config, "messages.reload-success", "&aConfiguration successfully reloaded!");
+        madeChanges |= checkAndAddMessage(config, "messages.invalid-player", "&cPlease enter a valid player name");
 
-        // Ban related messages
+        // Ban messages
         madeChanges |= checkAndAddMessage(config, "messages.player-banned", "&cYou are banned from this server!\n&cReason: &e{reason}\n&cExpires: &e{expires}");
         madeChanges |= checkAndAddMessage(config, "messages.already-banned", "&c{player} is already banned!");
         madeChanges |= checkAndAddMessage(config, "messages.not-banned", "&c{player} is not banned!");
-        madeChanges |= checkAndAddMessage(config, "messages.invalid-ban-id", "&cInvalid ban ID! Available IDs: {ids}");
+        madeChanges |= checkAndAddMessage(config, "messages.cannot-ban-staff", "&cYou cannot ban this player - they have bypass permission!");
 
-        // Mute related messages
+        // Mute messages
         madeChanges |= checkAndAddMessage(config, "messages.mute-success", "&aSuccessfully muted &c{player} &afor &e{reason} &afor &c{duration}");
         madeChanges |= checkAndAddMessage(config, "messages.unmute-success", "&aSuccessfully unmuted &c{player}");
         madeChanges |= checkAndAddMessage(config, "messages.player-muted", "&cYou have been muted in this server!\n&cReason: &e{reason}\n&cExpires: &e{expires}");
+        madeChanges |= checkAndAddMessage(config, "messages.player-unmuted", "&cYou have been unmuted in this server!");
         madeChanges |= checkAndAddMessage(config, "messages.already-muted", "&c{player} is already muted!");
         madeChanges |= checkAndAddMessage(config, "messages.not-muted", "&c{player} is not muted!");
-        madeChanges |= checkAndAddMessage(config, "messages.invalid-mute-id", "&cInvalid mute ID! Available IDs: {ids}");
+        madeChanges |= checkAndAddMessage(config, "messages.cannot-mute-staff", "&cYou cannot mute this player - they have bypass permission!");
+
+        // Command usage messages
+        madeChanges |= checkAndAddMessage(config, "messages.usage-ban", "&cUsage: /ban <player> <id>");
+        madeChanges |= checkAndAddMessage(config, "messages.usage-unban", "&cUsage: /unban <player>");
+        madeChanges |= checkAndAddMessage(config, "messages.usage-kick", "&cUsage: /kick <player> <reason>");
+        madeChanges |= checkAndAddMessage(config, "messages.usage-mute", "&cUsage: /mute <player> <mute-id>");
+        madeChanges |= checkAndAddMessage(config, "messages.history-usage", "&cUsage: /history <player>");
 
         // History messages
         madeChanges |= checkAndAddMessage(config, "messages.history.title", "&8History of {player}");
@@ -123,6 +205,13 @@ public class ConfigMigrator {
         madeChanges |= checkAndAddMessage(config, "messages.history.entry.duration.permanent", "&7Duration: &fPermanent");
         madeChanges |= checkAndAddMessage(config, "messages.history.entry.duration.temporary", "&7Duration: &f{duration}");
 
+        // Chat lock messages
+        madeChanges |= checkAndAddMessage(config, "messages.chat.locked", "&cThe chat has been locked by &e{staff}");
+        madeChanges |= checkAndAddMessage(config, "messages.chat.unlocked", "&aThe chat has been unlocked by &e{staff}");
+        madeChanges |= checkAndAddMessage(config, "messages.chat.no-permission-write", "&cThe chat is currently locked. Only staff members can write.");
+        madeChanges |= checkAndAddMessage(config, "messages.chat.already-locked", "&cThe chat is already locked!");
+        madeChanges |= checkAndAddMessage(config, "messages.chat.already-unlocked", "&cThe chat is already unlocked!");
+
         // Freeze messages
         madeChanges |= checkAndAddMessage(config, "messages.freeze.title.main", "&cYou have been frozen!");
         madeChanges |= checkAndAddMessage(config, "messages.freeze.title.subtitle", "&7Contact a staff member in the discord");
@@ -131,6 +220,8 @@ public class ConfigMigrator {
         madeChanges |= checkAndAddMessage(config, "messages.freeze.not-frozen", "&cThis player is not frozen");
         madeChanges |= checkAndAddMessage(config, "messages.freeze.unfrozen", "&aYou have been unfrozen");
         madeChanges |= checkAndAddMessage(config, "messages.freeze.unfrozen-by", "&aYou have unfrozen {player}");
+        madeChanges |= checkAndAddMessage(config, "messages.freeze-usage", "&cUsage: /freeze <player>");
+        madeChanges |= checkAndAddMessage(config, "messages.unfreeze-usage", "&cUsage: /unfreeze <player>");
 
         // Vanish messages
         madeChanges |= checkAndAddMessage(config, "messages.vanish.enabled", "&aVanish mode enabled");
@@ -141,29 +232,26 @@ public class ConfigMigrator {
         madeChanges |= checkAndAddMessage(config, "messages.examine.title", "&8Examining {player}");
         madeChanges |= checkAndAddMessage(config, "messages.examine.usage", "&cUsage: /examine <player>");
         madeChanges |= checkAndAddMessage(config, "messages.examine.offline", "&cPlayer must be online to be examined");
+        madeChanges |= checkAndAddMessage(config, "messages.examine.info.name", "&7Name: &f{name}");
+        madeChanges |= checkAndAddMessage(config, "messages.examine.info.uuid", "&7UUID: &f{uuid}");
+        madeChanges |= checkAndAddMessage(config, "messages.examine.info.ip", "&7IP: &f{ip}");
+        madeChanges |= checkAndAddMessage(config, "messages.examine.info.location", "&7Location: &f{world}, {x}, {y}, {z}");
+        madeChanges |= checkAndAddMessage(config, "messages.examine.info.gamemode", "&7Gamemode: &f{gamemode}");
+        madeChanges |= checkAndAddMessage(config, "messages.examine.info.health", "&7Health: &f{health}/20");
+        madeChanges |= checkAndAddMessage(config, "messages.examine.info.food", "&7Food: &f{food}/20");
+        madeChanges |= checkAndAddMessage(config, "messages.examine.info.exp", "&7Experience: &f{exp}");
+        madeChanges |= checkAndAddMessage(config, "messages.examine.info.op", "&7Operator: &f{op}");
 
-        // Chat lock messages
-        madeChanges |= checkAndAddMessage(config, "messages.chat.locked", "&cThe chat has been locked by &e{staff}");
-        madeChanges |= checkAndAddMessage(config, "messages.chat.unlocked", "&aThe chat has been unlocked by &e{staff}");
-        madeChanges |= checkAndAddMessage(config, "messages.chat.no-permission-write", "&cThe chat is currently locked. Only staff members can write.");
-        madeChanges |= checkAndAddMessage(config, "messages.chat.already-locked", "&cThe chat is already locked!");
-        madeChanges |= checkAndAddMessage(config, "messages.chat.already-unlocked", "&cThe chat is already unlocked!");
+        // Inventory see messages
+        madeChanges |= checkAndAddMessage(config, "messages.invsee.usage", "&cUsage: /invsee <player>");
+        madeChanges |= checkAndAddMessage(config, "messages.invsee.opened", "&aViewing inventory of &e{player}");
+        madeChanges |= checkAndAddMessage(config, "messages.invsee.view-only", "&cYou are in view-only mode. You cannot modify this inventory.");
 
-        // Usage messages
-        madeChanges |= checkAndAddMessage(config, "messages.usage-ban", "&cUsage: /ban <player> <id>");
-        madeChanges |= checkAndAddMessage(config, "messages.usage-unban", "&cUsage: /unban <player>");
-        madeChanges |= checkAndAddMessage(config, "messages.usage-kick", "&cUsage: /kick <player> <reason>");
-        madeChanges |= checkAndAddMessage(config, "messages.usage-mute", "&cUsage: /mute <player> <mute-id>");
-        madeChanges |= checkAndAddMessage(config, "messages.history-usage", "&cUsage: /history <player>");
-        madeChanges |= checkAndAddMessage(config, "messages.freeze-usage", "&cUsage: /freeze <player>");
-        madeChanges |= checkAndAddMessage(config, "messages.unfreeze-usage", "&cUsage: /unfreeze <player>");
-
-        if (madeChanges || version < CURRENT_VERSION) {
-            config.set(CONFIG_VERSION, CURRENT_VERSION);
-            plugin.saveConfig();
-            plugin.reloadConfig();
-            plugin.getLogger().info("Config update complete!");
-        }
+        // Clear inventory messages
+        madeChanges |= checkAndAddMessage(config, "messages.clearinv.usage", "&cUsage: /clearinv [player]");
+        madeChanges |= checkAndAddMessage(config, "messages.clearinv.cleared-self", "&aYour inventory has been cleared");
+        madeChanges |= checkAndAddMessage(config, "messages.clearinv.cleared-other", "&aCleared inventory of &e{player}");
+        madeChanges |= checkAndAddMessage(config, "messages.clearinv.cleared-by", "&cYour inventory has been cleared by &e{staff}");
     }
 
     private boolean checkAndAddMessage(FileConfiguration config, String path, String defaultValue) {

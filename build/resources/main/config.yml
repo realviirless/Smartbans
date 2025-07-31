@@ -114,6 +114,132 @@ messages:
     title: "&8Examining {player}"
     usage: "&cUsage: /examine <player>"
     offline: "&cPlayer must be online to be examined"
-  reload-success: "&aConfiguration successfully reloaded!"
-  cannot-target-self: "&cYou cannot target yourself!"
-  staff-bypass: "&cYou cannot target this player - they have bypass permission!"
+    info:
+      name: "&7Name: &f{name}"
+      uuid: "&7UUID: &f{uuid}"
+      ip: "&7IP: &f{ip}"
+      location: "&7Location: &f{world}, {x}, {y}, {z}"
+      gamemode: "&7Gamemode: &f{gamemode}"
+      health: "&7Health: &f{health}/20"
+      food: "&7Food: &f{food}/20"
+      exp: "&7Experience: &f{exp}"
+      op: "&7Operator: &f{op}"
+
+  invsee:
+    usage: "&cUsage: /invsee <player>"
+    opened: "&aViewing inventory of &e{player}"
+    view-only: "&cYou are in view-only mode. You cannot modify this inventory."
+
+  clearinv:
+    usage: "&cUsage: /clearinv [player]"
+    cleared-self: "&aYour inventory has been cleared"
+    cleared-other: "&aCleared inventory of &e{player}"
+    cleared-by: "&cYour inventory has been cleared by &e{staff}"
+
+usage-format:
+  divider: "&7&m--------------------------------"
+  ban-command:
+    header: "&cUsage: &7/ban <player> <ban-id>"
+    list-header: "&cAvailable Ban IDs:"
+    format: "&7ID: &c{id} &7| Reason: &c{reason} &7| Duration: &c{duration}"
+  mute-command:
+    header: "&cUsage: &7/mute <player> <mute-id>"
+    list-header: "&cAvailable Mute IDs:"
+    format: "&7ID: &c{id} &7| Reason: &c{reason} &7| Duration: &c{duration}"
+  kick-command:
+    header: "&cUsage: &7/kick <player> <reason>"
+    list-header: "&cKick Command Help:"
+    info: "&7Write your custom kick reason after the player name."
+    example: "&7Example: &c/kick Player1 Breaking the rules"
+
+messages:
+  # Error messages
+  player-not-found: "&cPlayer not found!"
+  player-not-online: "&cPlayer is not online!"
+  invalid-ban-id: "&cInvalid ban ID! Available IDs: {ids}"
+  no-permission: "&cYou don't have permission to use this command!"
+  already-banned: "&c{player} is already banned!"
+  not-banned: "&c{player} is not banned!"
+  cannot-ban-staff: "&cYou cannot ban this player - they have bypass permission!"
+  cannot-kick-staff: "&cYou cannot kick this player - they have bypass permission!"
+  invalid-mute-id: "&cInvalid mute ID! Available IDs: {ids}"
+  usage-format:
+    divider: "&7&m--------------------------------"
+    ban-command:
+      header: "&cUsage: &7/ban <player> <ban-id>"
+      list-header: "&cAvailable Ban IDs:"
+      format: "&7ID: &c{id} &7| Reason: &c{reason} &7| Duration: &c{duration}"
+    mute-command:
+      header: "&cUsage: &7/mute <player> <mute-id>"
+      list-header: "&cAvailable Mute IDs:"
+      format: "&7ID: &c{id} &7| Reason: &c{reason} &7| Duration: &c{duration}"
+    kick-command:
+      header: "&cUsage: &7/kick <player> <reason>"
+      list-header: "&cKick Command Help:"
+      info: "&7Write your custom kick reason after the player name."
+      example: "&7Example: &c/kick Player1 Breaking the rules"
+
+  # Success messages
+  ban-success: "&aSuccessfully banned &c{player} &afor &e{reason} &afor &c{duration}"
+  unban-success: "&aSuccessfully unbanned &c{player}"
+  kick-success: "&aSuccessfully kicked &c{player} &afor &e{reason}"
+  mute-success: "&aSuccessfully muted &c{player} &afor &e{reason} &afor &c{duration}"
+  unmute-success: "&aSuccessfully unmuted &c{player}"
+  player-unmuted: "&cYou have been unmuted in this server!"
+  cleared-self: "&aYour inventory has been cleared"
+  cleared-other: "&aCleared inventory of &e{player}"
+  cleared-by: "&cYour inventory has been cleared by &e{staff}"
+
+  # Player messages
+  player-banned: "&cYou are banned from this server!\n&cReason: &e{reason}\n&cExpires: &e{expires}"
+  player-kicked: "&cYou have been kicked from the server!\n&cReason: &e{reason}"
+  player-muted: "&cYou have been muted in this server!\n&cReason: &e{reason}\n&cExpires: &e{expires}"
+
+  # History messages
+  history:
+    title: "&8History of {player}"
+    no-entries: "&cNo history entries found"
+    entry:
+      ban: "&eBan"
+      mute: "&eMute"
+      by: "&7By: &f{staff}"
+      reason: "&7Reason: &f{reason}"
+      date: "&7Date: &f{date}"
+      duration:
+        permanent: "&7Duration: &fPermanent"
+        temporary: "&7Duration: &f{duration}"
+
+  # Chat messages
+  chat:
+    locked: "&cThe chat has been locked by &e{staff}"
+    unlocked: "&aThe chat has been unlocked by &e{staff}"
+    no-permission-write: "&cThe chat is currently locked. Only staff members can write."
+    already-locked: "&cThe chat is already locked!"
+    already-unlocked: "&cThe chat is already unlocked!"
+
+  # Freeze messages
+  freeze:
+    title:
+      main: "&cYou have been frozen!"
+      subtitle: "&7Contact a staff member in the discord"
+    frozen-by: "&aYou have frozen {player}"
+    already-frozen: "&cThis player is already frozen"
+    not-frozen: "&cThis player is not frozen"
+    unfrozen: "&aYou have been unfrozen"
+    unfrozen-by: "&aYou have unfrozen {player}"
+
+  # Vanish messages
+  vanish:
+    enabled: "&aVanish mode enabled"
+    disabled: "&cVanish mode disabled"
+    actionbar: "&7Vanish &a✔"
+
+  # Inventory see messages
+  invsee:
+    usage: "&cUsage: /invsee <player>"
+    opened: "&aViewing inventory of &e{player}"
+    view-only: "&cYou are in view-only mode. You cannot modify this inventory."
+
+  # Clear inventory messages
+  clearinv:
+    usage: "&cUsage: /clearinv [player]"
