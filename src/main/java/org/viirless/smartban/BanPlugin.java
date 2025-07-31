@@ -56,6 +56,9 @@ public class BanPlugin extends JavaPlugin {
         getCommand("vanish").setExecutor(new VanishCommand(this));
         getCommand("invsee").setExecutor(new InvseeCommand(this));
         getCommand("clearinv").setExecutor(new ClearInventoryCommand(this));
+        LockChatCommand lockChatCommand = new LockChatCommand(this);
+        getCommand("lockchat").setExecutor(lockChatCommand);
+        getCommand("unlockchat").setExecutor(new UnlockChatCommand(this, lockChatCommand));
 
         // Register tab completers
         getCommand("ban").setTabCompleter(tabCompleter);
@@ -63,7 +66,7 @@ public class BanPlugin extends JavaPlugin {
 
         // Register event listeners
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
-        getServer().getPluginManager().registerEvents(new ChatListener(this), this);
+        getServer().getPluginManager().registerEvents(new ChatListener(this, lockChatCommand), this);
         getServer().getPluginManager().registerEvents(new PlayerFreezeListener(this), this);
         getServer().getPluginManager().registerEvents(new ExamineListener(this), this);
 

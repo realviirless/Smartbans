@@ -10,14 +10,26 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 public class ChatListener implements Listener {
 
     private final BanPlugin plugin;
+    private final LockChatCommand lockChatCommand;
 
-    public ChatListener(BanPlugin plugin) {
+    public ChatListener(BanPlugin plugin, LockChatCommand lockChatCommand) {
         this.plugin = plugin;
+        this.lockChatCommand = lockChatCommand;
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
+
+        // Check if chat is locked
+        if (lockChatCommand.isChatLocked() && !player.hasPermission("banplugin.lockchat.bypass")) {
+            event.setCancelled(true);
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                plugin.getConfig().getString("messages.chat.no-permission-write")));
+            return;
+        }
+
+        // Check mute status
         String uuid = player.getUniqueId().toString();
         String path = "muted-players." + uuid;
 
