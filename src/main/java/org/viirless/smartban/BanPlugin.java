@@ -5,9 +5,12 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import org.bukkit.scheduler.BukkitTask;
 
 public class BanPlugin extends JavaPlugin {
 
@@ -17,12 +20,14 @@ public class BanPlugin extends JavaPlugin {
     private FileConfiguration historyConfig;
     private Set<UUID> frozenPlayers;
     private Set<UUID> vanishedPlayers; // Add this field
+    private Map<UUID, BukkitTask> actionBarTasks;
 
     @Override
     public void onEnable() {
-        // Initialize sets
+        // Initialize collections
         frozenPlayers = new HashSet<>();
-        vanishedPlayers = new HashSet<>(); // Initialize vanished players set
+        vanishedPlayers = new HashSet<>();
+        actionBarTasks = new HashMap<>();
 
         // Save default config if it doesn't exist
         saveDefaultConfig();
@@ -30,6 +35,9 @@ public class BanPlugin extends JavaPlugin {
         // Create bans.yml and history.yml files
         createBansFile();
         createHistoryFile();
+
+        // Run migrations if needed
+        new ConfigMigrator(this).migrateConfigs();
 
         // Create TabCompleter instance
         BanTabCompleter tabCompleter = new BanTabCompleter(this);
@@ -64,6 +72,10 @@ public class BanPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        // Cancel all running tasks
+        actionBarTasks.values().forEach(BukkitTask::cancel);
+        actionBarTasks.clear();
+
         getLogger().info("Ban Plugin has been disabled!");
     }
 
@@ -133,7 +145,25 @@ public class BanPlugin extends JavaPlugin {
         historyConfig.set(key + ".reason", reason);
         historyConfig.set(key + ".date", System.currentTimeMillis());
         historyConfig.set(key + ".duration", duration);
+
+        // Calculate and set the status
+        if (duration == -1) {
+            historyConfig.set(key + ".status", "Permanent");
+        } else {
+            long expiryTime = System.currentTimeMillis() + duration;
+            historyConfig.set(key + ".expiry", expiryTime);
+            historyConfig.set(key + ".status", "Active");
+        }
+
         saveHistoryConfig();
+    }
+
+    public void updatePunishmentStatus(String uuid, long timestamp, boolean finished) {
+        String key = uuid + "." + timestamp;
+        if (historyConfig.contains(key)) {
+            historyConfig.set(key + ".status", finished ? "Finished" : "Active");
+            saveHistoryConfig();
+        }
     }
 
     public Set<UUID> getFrozenPlayers() {
@@ -142,6 +172,10 @@ public class BanPlugin extends JavaPlugin {
 
     public Set<UUID> getVanishedPlayers() {
         return vanishedPlayers;
+    }
+
+    public Map<UUID, BukkitTask> getActionBarTasks() {
+        return actionBarTasks;
     }
 
     public String colorize(String message) {

@@ -1,3 +1,6 @@
+# SmartBans Configuration File DO NOT EDIT THIS VERSION MANUALLY
+config-version: 1.0
+
 # Ban Plugin Configuration
 # Configure ban reasons, durations, and IDs
 
@@ -125,6 +128,7 @@ messages:
   vanish:
     enabled: "&aVanish mode enabled"
     disabled: "&cVanish mode disabled"
+    actionbar: "&7Vanish &a✔"
   invsee:
     usage: "&cUsage: /invsee <player>"
     opened: "&aViewing inventory of &e{player}"
