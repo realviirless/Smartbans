@@ -1,0 +1,9 @@
+# History file for bans and mutes
+# Format:
+# uuid:
+#   - type: BAN/MUTE
+#     by: staff-name
+#     reason: reason
+#     date: timestamp
+#     duration: duration
+

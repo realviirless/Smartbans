@@ -1,0 +1,125 @@
+name: Smartbans
+version: 'BETA 1.4'
+main: org.viirless.smartban.BanPlugin
+api-version: '1.21'
+
+commands:
+  ban:
+    description: Ban a player with configurable reasons
+    usage: /ban <player> <id>
+  unban:
+    description: Unban a player
+    usage: /unban <player>
+  kick:
+    description: Kick a player with a custom reason
+    usage: /kick <player> <reason>
+  mute:
+    description: Mute a player with configurable reasons
+    usage: /mute <player> <id>
+  unmute:
+    description: Unmute a player
+    usage: /unmute <player>
+  history:
+    description: View a player's ban and mute history
+    usage: /history <player>
+  smartbans:
+    description: Reload the plugin configuration
+    usage: /smartbans reload
+  freeze:
+    description: Freeze a player
+    usage: /freeze <player>
+  unfreeze:
+    description: Unfreeze a player
+    usage: /unfreeze <player>
+  examine:
+    description: Examine detailed information about a player
+    usage: /examine <player>
+  vanish:
+    description: Toggle vanish mode
+    usage: /vanish
+    aliases: [v]
+  invsee:
+    description: View another player's inventory
+    usage: /invsee <player>
+  clearinv:
+    description: Clear a player's inventory
+    usage: /clearinv [player]
+    aliases: [ci]
+
+permissions:
+  banplugin.ban:
+    description: Allows banning players
+    default: op
+  banplugin.unban:
+    description: Allows unbanning players
+    default: op
+  banplugin.kick:
+    description: Allows kicking players
+    default: op
+  banplugin.mute:
+    description: Allows muting players
+    default: op
+  banplugin.unmute:
+    description: Allows unmuting players
+    default: op
+  banplugin.bypass:
+    description: Prevents being banned, kicked or muted by other staff members
+    default: op
+  banplugin.history:
+    description: Allows viewing ban and mute history of players
+    default: op
+  banplugin.reload:
+    description: Allows reloading the plugin configuration
+    default: op
+  banplugin.admin:
+    description: Grants all administrative permissions
+    default: op
+    children:
+      banplugin.ban: true
+      banplugin.unban: true
+      banplugin.kick: true
+      banplugin.mute: true
+      banplugin.unmute: true
+      banplugin.history: true
+      banplugin.reload: true
+      banplugin.invsee: true
+      banplugin.invsee.modify: true
+  banplugin.freeze:
+    description: Allows freezing players
+    default: op
+  banplugin.unfreeze:
+    description: Allows unfreezing players
+    default: op
+  banplugin.freeze.bypass:
+    description: Prevents being frozen
+    default: op
+  banplugin.examine:
+    description: Allows examining detailed player information
+    default: op
+  banplugin.vanish:
+    description: Allows using vanish mode
+    default: op
+  banplugin.vanish.see:
+    description: Allows seeing vanished staff members
+    default: op
+  banplugin.invsee:
+    description: Allows viewing other players' inventories
+    default: op
+  banplugin.invsee.bypass:
+    description: Prevents inventory from being viewed
+    default: op
+  banplugin.invsee.modify:
+    description: Allows modifying inventories while using invsee
+    default: op
+  banplugin.clearinv:
+    description: Allows clearing inventories
+    default: op
+  banplugin.clearinv.bypass:
+    description: Prevents inventory from being cleared
+    default: op
+  banplugin.*:
+    description: Grants all plugin permissions including bypass
+    default: op
+    children:
+      banplugin.admin: true
+      banplugin.bypass: true

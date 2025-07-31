@@ -1,0 +1,152 @@
+# Ban Plugin Configuration
+# Configure ban reasons, durations, and IDs
+
+settings:
+  use-id-system:
+    ban: true    # true = use IDs (1,2,3), false = use reasons directly
+    mute: true   # true = use IDs (1,2,3), false = use reasons directly
+
+bans:
+  1:
+    reason: "Cheating/Hacking"
+    duration: "30d"
+  2:
+    reason: "Griefing"
+    duration: "7d"
+  3:
+    reason: "Spam/Advertising"
+    duration: "1h"
+  4:
+    reason: "Toxic Behavior"
+    duration: "3d"
+  5:
+    reason: "Exploiting"
+    duration: "14d"
+  6:
+    reason: "Inappropriate Username"
+    duration: "1d"
+  7:
+    reason: "Ban Evasion"
+    duration: "60d"
+  8:
+    reason: "Staff Disrespect"
+    duration: "2d"
+
+mutes:
+  1:
+    reason: "Chat Spam"
+    duration: "1h"
+  2:
+    reason: "Insulting Players"
+    duration: "2h"
+  3:
+    reason: "Racism"
+    duration: "7d"
+  4:
+    reason: "Advertising"
+    duration: "1d"
+  5:
+    reason: "Toxic Behavior"
+    duration: "3d"
+
+# Duration format:
+# s = seconds, m = minutes, h = hours, d = days
+# Examples: 30s, 5m, 2h, 7d
+
+# Messages
+messages:
+  ban-success: "&aSuccessfully banned &c{player} &afor &e{reason} &afor &c{duration}"
+  unban-success: "&aSuccessfully unbanned &c{player}"
+  kick-success: "&aSuccessfully kicked &c{player} &afor &e{reason}"
+  player-not-found: "&cPlayer not found!"
+  player-not-online: "&cPlayer is not online!"
+  invalid-ban-id: "&cInvalid ban ID! Available IDs: {ids}"
+  no-permission: "&cYou don't have permission to use this command!"
+  player-banned: "&cYou are banned from this server!\n&cReason: &e{reason}\n&cExpires: &e{expires}"
+  player-kicked: "&cYou have been kicked from the server!\n&cReason: &e{reason}"
+  already-banned: "&c{player} is already banned!"
+  not-banned: "&c{player} is not banned!"
+  cannot-ban-staff: "&cYou cannot ban this player - they have bypass permission!"
+  cannot-kick-staff: "&cYou cannot kick this player - they have bypass permission!"
+  usage-ban: "&cUsage: /ban <player> <id>"
+  usage-unban: "&cUsage: /unban <player>"
+  usage-kick: "&cUsage: /kick <player> <reason>"
+  mute-success: "&aSuccessfully muted &c{player} &afor &e{reason} &afor &c{duration}"
+  unmute-success: "&aSuccessfully unmuted &c{player}"
+  player-muted: "&cYou have been muted in this server!\n&cReason: &e{reason}\n&cExpires: &e{expires}"
+  player-unmuted: "&cYou have been unmuted in this server!"
+  already-muted: "&c{player} is already muted!"
+  not-muted: "&c{player} is not muted!"
+  cannot-mute-staff: "&cYou cannot mute this player - they have bypass permission!"
+  usage-mute: "&cUsage: /mute <player> <mute-id>"
+  invalid-mute-id: "&cInvalid mute ID! Available IDs: {ids}"
+  history:
+    title: "&8History of {player}"
+    no-entries: "&cNo history entries found"
+    entry:
+      ban: "&eBan"
+      mute: "&eMute"
+      by: "&7By: &f{staff}"
+      reason: "&7Reason: &f{reason}"
+      date: "&7Date: &f{date}"
+      duration:
+        permanent: "&7Duration: &fPermanent"
+        temporary: "&7Duration: &f{duration}"
+  invalid-player: "&cPlease enter a valid player name"
+  history-usage: "&cUsage: /history <player>"
+  reload-success: "&aConfiguration successfully reloaded!"
+  freeze:
+    title:
+      main: "&cYou have been frozen!"
+      subtitle: "&7Contact a staff member in the discord"
+    frozen-by: "&aYou have frozen {player}"
+    already-frozen: "&cThis player is already frozen"
+    not-frozen: "&cThis player is not frozen"
+    unfrozen: "&aYou have been unfrozen"
+    unfrozen-by: "&aYou have unfrozen {player}"
+  freeze-usage: "&cUsage: /freeze <player>"
+  unfreeze-usage: "&cUsage: /unfreeze <player>"
+  cannot-target-self: "&cYou cannot target yourself!"
+  staff-bypass: "&cYou cannot target this player - they have bypass permission!"
+  examine:
+    title: "&8Examining {player}"
+    usage: "&cUsage: /examine <player>"
+    offline: "&cPlayer must be online to be examined"
+    info:
+      name: "&7Name: &f{name}"
+      uuid: "&7UUID: &f{uuid}"
+      ip: "&7IP: &f{ip}"
+      location: "&7Location: &f{world}, {x}, {y}, {z}"
+      gamemode: "&7Gamemode: &f{gamemode}"
+      health: "&7Health: &f{health}/20"
+      food: "&7Food: &f{food}/20"
+      exp: "&7Experience: &f{exp}"
+      op: "&7Operator: &f{op}"
+  vanish:
+    enabled: "&aVanish mode enabled"
+    disabled: "&cVanish mode disabled"
+  invsee:
+    usage: "&cUsage: /invsee <player>"
+    opened: "&aViewing inventory of &e{player}"
+    view-only: "&cYou are in view-only mode. You cannot modify this inventory."
+  clearinv:
+    usage: "&cUsage: /clearinv [player]"
+    cleared-self: "&aYour inventory has been cleared"
+    cleared-other: "&aCleared inventory of &e{player}"
+    cleared-by: "&cYour inventory has been cleared by &e{staff}"
+
+usage-format:
+  divider: "&7&m--------------------------------"
+  ban-command:
+    header: "&cUsage: &7/ban <player> <ban-id>"
+    list-header: "&cAvailable Ban IDs:"
+    format: "&7ID: &c{id} &7| Reason: &c{reason} &7| Duration: &c{duration}"
+  mute-command:
+    header: "&cUsage: &7/mute <player> <mute-id>"
+    list-header: "&cAvailable Mute IDs:"
+    format: "&7ID: &c{id} &7| Reason: &c{reason} &7| Duration: &c{duration}"
+  kick-command:
+    header: "&cUsage: &7/kick <player> <reason>"
+    list-header: "&cKick Command Help:"
+    info: "&7Write your custom kick reason after the player name."
+    example: "&7Example: &c/kick Player1 Breaking the rules"
