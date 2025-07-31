@@ -38,6 +38,14 @@ public class MuteCommand implements CommandExecutor {
         }
 
         String playerName = args[0];
+
+        // Prevent players from muting themselves
+        if (sender instanceof Player && playerName.equalsIgnoreCase(((Player) sender).getName())) {
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                plugin.getConfig().getString("messages.cannot-target-self")));
+            return true;
+        }
+
         boolean useIdSystem = plugin.getConfig().getBoolean("settings.use-id-system.mute", true);
 
         // Combine all arguments after player name for the reason/id
@@ -82,10 +90,11 @@ public class MuteCommand implements CommandExecutor {
         OfflinePlayer target = Bukkit.getOfflinePlayer(playerName);
 
         // Only check for bypass permission if target is online and sender is not console
-        if (target.isOnline() && !(sender instanceof ConsoleCommandSender)) {
+        if (target.isOnline()) {
             Player onlineTarget = (Player) target;
-            if (onlineTarget.hasPermission("banplugin.bypass")) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.cannot-mute-staff")));
+            if (onlineTarget.hasPermission("banplugin.bypass") || onlineTarget.isOp()) {
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    plugin.getConfig().getString("messages.staff-bypass")));
                 return true;
             }
         }
@@ -183,13 +192,13 @@ public class MuteCommand implements CommandExecutor {
 
         long multiplier;
         if (duration.endsWith("s")) {
-            multiplier = 1000; // Sekunden zu Millisekunden
+            multiplier = 1000; // Seconds to milliseconds
         } else if (duration.endsWith("m")) {
-            multiplier = 1000 * 60; // Minuten zu Millisekunden
+            multiplier = 1000 * 60; // Minutes to milliseconds
         } else if (duration.endsWith("h")) {
-            multiplier = 1000 * 60 * 60; // Stunden zu Millisekunden
+            multiplier = 1000 * 60 * 60; // Hours to milliseconds
         } else if (duration.endsWith("d")) {
-            multiplier = 1000 * 60 * 60 * 24; // Tage zu Millisekunden
+            multiplier = 1000 * 60 * 60 * 24; // Days to milliseconds
         } else {
             return 0;
         }

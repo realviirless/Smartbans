@@ -25,6 +25,26 @@ commands:
   smartbans:
     description: Reload the plugin configuration
     usage: /smartbans reload
+  freeze:
+    description: Freeze a player
+    usage: /freeze <player>
+  unfreeze:
+    description: Unfreeze a player
+    usage: /unfreeze <player>
+  examine:
+    description: Examine detailed information about a player
+    usage: /examine <player>
+  vanish:
+    description: Toggle vanish mode
+    usage: /vanish
+    aliases: [v]
+  invsee:
+    description: View another player's inventory
+    usage: /invsee <player>
+  clearinv:
+    description: Clear a player's inventory
+    usage: /clearinv [player]
+    aliases: [ci]
 
 permissions:
   banplugin.ban:
@@ -62,6 +82,41 @@ permissions:
       banplugin.unmute: true
       banplugin.history: true
       banplugin.reload: true
+      banplugin.invsee: true
+      banplugin.invsee.modify: true
+  banplugin.freeze:
+    description: Allows freezing players
+    default: op
+  banplugin.unfreeze:
+    description: Allows unfreezing players
+    default: op
+  banplugin.freeze.bypass:
+    description: Prevents being frozen
+    default: op
+  banplugin.examine:
+    description: Allows examining detailed player information
+    default: op
+  banplugin.vanish:
+    description: Allows using vanish mode
+    default: op
+  banplugin.vanish.see:
+    description: Allows seeing vanished staff members
+    default: op
+  banplugin.invsee:
+    description: Allows viewing other players' inventories
+    default: op
+  banplugin.invsee.bypass:
+    description: Prevents inventory from being viewed
+    default: op
+  banplugin.invsee.modify:
+    description: Allows modifying inventories while using invsee
+    default: op
+  banplugin.clearinv:
+    description: Allows clearing inventories
+    default: op
+  banplugin.clearinv.bypass:
+    description: Prevents inventory from being cleared
+    default: op
   banplugin.*:
     description: Grants all plugin permissions including bypass
     default: op

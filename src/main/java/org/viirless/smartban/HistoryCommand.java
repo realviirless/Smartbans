@@ -1,4 +1,4 @@
-package org.viirless.smartban;
+ package org.viirless.smartban;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

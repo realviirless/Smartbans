@@ -5,6 +5,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 public class BanPlugin extends JavaPlugin {
 
@@ -12,9 +15,15 @@ public class BanPlugin extends JavaPlugin {
     private FileConfiguration bansConfig;
     private File historyFile;
     private FileConfiguration historyConfig;
+    private Set<UUID> frozenPlayers;
+    private Set<UUID> vanishedPlayers; // Add this field
 
     @Override
     public void onEnable() {
+        // Initialize sets
+        frozenPlayers = new HashSet<>();
+        vanishedPlayers = new HashSet<>(); // Initialize vanished players set
+
         // Save default config if it doesn't exist
         saveDefaultConfig();
 
@@ -33,6 +42,12 @@ public class BanPlugin extends JavaPlugin {
         getCommand("unmute").setExecutor(new UnmuteCommand(this));
         getCommand("history").setExecutor(new HistoryCommand(this));
         getCommand("smartbans").setExecutor(new ReloadCommand(this));
+        getCommand("freeze").setExecutor(new FreezeCommand(this));
+        getCommand("unfreeze").setExecutor(new UnfreezeCommand(this));
+        getCommand("examine").setExecutor(new ExamineCommand(this));
+        getCommand("vanish").setExecutor(new VanishCommand(this));
+        getCommand("invsee").setExecutor(new InvseeCommand(this));
+        getCommand("clearinv").setExecutor(new ClearInventoryCommand(this));
 
         // Register tab completers
         getCommand("ban").setTabCompleter(tabCompleter);
@@ -41,6 +56,8 @@ public class BanPlugin extends JavaPlugin {
         // Register event listeners
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerFreezeListener(this), this);
+        getServer().getPluginManager().registerEvents(new ExamineListener(this), this);
 
         getLogger().info("Ban Plugin has been enabled!");
     }
@@ -117,5 +134,17 @@ public class BanPlugin extends JavaPlugin {
         historyConfig.set(key + ".date", System.currentTimeMillis());
         historyConfig.set(key + ".duration", duration);
         saveHistoryConfig();
+    }
+
+    public Set<UUID> getFrozenPlayers() {
+        return frozenPlayers;
+    }
+
+    public Set<UUID> getVanishedPlayers() {
+        return vanishedPlayers;
+    }
+
+    public String colorize(String message) {
+        return message != null ? org.bukkit.ChatColor.translateAlternateColorCodes('&', message) : "";
     }
 }
