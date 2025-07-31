@@ -1,3 +1,12 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Environment-dependent path to Maven home directory
+/mavenHomeManager.xml
+# Copilot diff state
+copilotDiffState.xml
+/.idea/copilotDiffState.xml
+.idea/copilotDiffState.xml
 # Project exclude paths
 /.gradle/
 /build/
@@ -5,3 +14,4 @@
 copilotDiffState.xml
 /.idea/copilotDiffState.xml
 .idea/copilotDiffState.xml
+

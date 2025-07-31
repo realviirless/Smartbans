@@ -1,9 +1,5 @@
-# History file for bans and mutes
-# Format:
-# uuid:
-#   - type: BAN/MUTE
-#     by: staff-name
-#     reason: reason
-#     date: timestamp
-#     duration: duration
+# SmartBans History Storage File DO NOT EDIT THIS VERSION MANUALLY
+config-version: 1.0
 
+# This file stores the punishment history of all players
+# Format: UUID.timestamp.type = punishment data

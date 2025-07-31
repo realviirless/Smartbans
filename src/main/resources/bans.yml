@@ -1,0 +1,5 @@
+# SmartBans Bans Storage  DO NOT EDIT THIS VERSION MANUALLY
+config-version: 1.0
+
+# This file stores all active bans
+banned-players:

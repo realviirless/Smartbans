@@ -1,3 +1,6 @@
+# SmartBans Configuration File DO NOT EDIT THIS VERSION MANUALLY
+config-version: 1.0
+
 # Ban Plugin Configuration
 # Configure ban reasons, durations, and IDs
 
@@ -95,6 +98,46 @@ messages:
   invalid-player: "&cPlease enter a valid player name"
   history-usage: "&cUsage: /history <player>"
   reload-success: "&aConfiguration successfully reloaded!"
+  freeze:
+    title:
+      main: "&cYou have been frozen!"
+      subtitle: "&7Contact a staff member in the discord"
+    frozen-by: "&aYou have frozen {player}"
+    already-frozen: "&cThis player is already frozen"
+    not-frozen: "&cThis player is not frozen"
+    unfrozen: "&aYou have been unfrozen"
+    unfrozen-by: "&aYou have unfrozen {player}"
+  freeze-usage: "&cUsage: /freeze <player>"
+  unfreeze-usage: "&cUsage: /unfreeze <player>"
+  cannot-target-self: "&cYou cannot target yourself!"
+  staff-bypass: "&cYou cannot target this player - they have bypass permission!"
+  examine:
+    title: "&8Examining {player}"
+    usage: "&cUsage: /examine <player>"
+    offline: "&cPlayer must be online to be examined"
+    info:
+      name: "&7Name: &f{name}"
+      uuid: "&7UUID: &f{uuid}"
+      ip: "&7IP: &f{ip}"
+      location: "&7Location: &f{world}, {x}, {y}, {z}"
+      gamemode: "&7Gamemode: &f{gamemode}"
+      health: "&7Health: &f{health}/20"
+      food: "&7Food: &f{food}/20"
+      exp: "&7Experience: &f{exp}"
+      op: "&7Operator: &f{op}"
+  vanish:
+    enabled: "&aVanish mode enabled"
+    disabled: "&cVanish mode disabled"
+    actionbar: "&7Vanish &a✔"
+  invsee:
+    usage: "&cUsage: /invsee <player>"
+    opened: "&aViewing inventory of &e{player}"
+    view-only: "&cYou are in view-only mode. You cannot modify this inventory."
+  clearinv:
+    usage: "&cUsage: /clearinv [player]"
+    cleared-self: "&aYour inventory has been cleared"
+    cleared-other: "&aCleared inventory of &e{player}"
+    cleared-by: "&cYour inventory has been cleared by &e{staff}"
 
 usage-format:
   divider: "&7&m--------------------------------"

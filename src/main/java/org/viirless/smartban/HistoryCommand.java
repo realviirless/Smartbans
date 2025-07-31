@@ -17,10 +17,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class HistoryCommand implements CommandExecutor {
     private final BanPlugin plugin;
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public HistoryCommand(BanPlugin plugin) {
         this.plugin = plugin;
@@ -28,107 +29,106 @@ public class HistoryCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "This command can only be executed by players!");
-            return true;
-        }
-
         if (!sender.hasPermission("banplugin.history")) {
-            sender.sendMessage(colorize(plugin.getConfig().getString("messages.no-permission")));
+            sender.sendMessage(plugin.colorize(plugin.getConfig().getString("messages.no-permission")));
             return true;
         }
 
-        if (args.length < 1) {
-            sender.sendMessage(colorize(plugin.getConfig().getString("messages.history-usage")));
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(plugin.colorize("&cThis command can only be used by players!"));
             return true;
         }
 
-        OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
-        if (target == null) {
-            sender.sendMessage(colorize(plugin.getConfig().getString("messages.invalid-player")));
+        if (args.length != 1) {
+            sender.sendMessage(plugin.colorize(plugin.getConfig().getString("messages.history-usage")));
             return true;
         }
 
         Player player = (Player) sender;
-        openHistoryGUI(player, target);
+        String targetName = args[0];
+        Player target = Bukkit.getPlayer(targetName);
+        String uuid = target != null ? target.getUniqueId().toString() : Bukkit.getOfflinePlayer(targetName).getUniqueId().toString();
+
+        ConfigurationSection history = plugin.getHistoryConfig().getConfigurationSection(uuid);
+        if (history == null || history.getKeys(false).isEmpty()) {
+            player.sendMessage(plugin.colorize(plugin.getConfig().getString("messages.history.no-entries")));
+            return true;
+        }
+
+        openHistoryGUI(player, targetName, uuid);
         return true;
     }
 
-    private void openHistoryGUI(Player viewer, OfflinePlayer target) {
-        String title = colorize(plugin.getConfig().getString("messages.history.title")
-                .replace("{player}", target.getName()));
-        Inventory gui = Bukkit.createInventory(null, 54, title);
+    private void openHistoryGUI(Player player, String targetName, String uuid) {
+        Inventory gui = Bukkit.createInventory(null, 54, plugin.colorize(
+                plugin.getConfig().getString("messages.history.title").replace("{player}", targetName)));
 
-        ConfigurationSection history = plugin.getHistoryConfig().getConfigurationSection(target.getUniqueId().toString());
-        if (history == null) {
-            ItemStack noHistory = new ItemStack(Material.BARRIER);
-            ItemMeta meta = noHistory.getItemMeta();
-            meta.setDisplayName(colorize(plugin.getConfig().getString("messages.history.no-entries")));
-            noHistory.setItemMeta(meta);
-            gui.setItem(22, noHistory);
-            viewer.openInventory(gui);
-            return;
-        }
+        ConfigurationSection history = plugin.getHistoryConfig().getConfigurationSection(uuid);
+        if (history == null) return;
 
-        List<ItemStack> historyItems = new ArrayList<>();
-        for (String key : history.getKeys(false)) {
-            ConfigurationSection entry = history.getConfigurationSection(key);
-            ItemStack paper = new ItemStack(Material.PAPER);
-            ItemMeta meta = paper.getItemMeta();
+        int slot = 0;
+        for (String timestamp : history.getKeys(false)) {
+            if (slot >= 54) break;
 
-            String type = entry.getString("type");
-            String by = entry.getString("by");
-            String reason = entry.getString("reason");
-            long date = entry.getLong("date");
-            long duration = entry.getLong("duration");
+            ConfigurationSection entry = history.getConfigurationSection(timestamp);
+            if (entry == null) continue;
 
-            meta.setDisplayName(colorize(plugin.getConfig().getString("messages.history.entry." + type.toLowerCase())));
+            ItemStack item = new ItemStack(Material.PAPER);
+            ItemMeta meta = item.getItemMeta();
+            if (meta == null) continue;
+
+            String type = entry.getString("type", "UNKNOWN");
+            meta.setDisplayName(plugin.colorize(plugin.getConfig().getString("messages.history.entry." + type.toLowerCase())));
 
             List<String> lore = new ArrayList<>();
-            lore.add(colorize(plugin.getConfig().getString("messages.history.entry.by")
-                    .replace("{staff}", by)));
-            lore.add(colorize(plugin.getConfig().getString("messages.history.entry.reason")
-                    .replace("{reason}", reason)));
-            lore.add(colorize(plugin.getConfig().getString("messages.history.entry.date")
-                    .replace("{date}", dateFormat.format(new Date(date)))));
+            lore.add(plugin.colorize(plugin.getConfig().getString("messages.history.entry.by")
+                    .replace("{staff}", entry.getString("by", "Unknown"))));
+            lore.add(plugin.colorize(plugin.getConfig().getString("messages.history.entry.reason")
+                    .replace("{reason}", entry.getString("reason", "Unknown"))));
+            lore.add(plugin.colorize(plugin.getConfig().getString("messages.history.entry.date")
+                    .replace("{date}", dateFormat.format(new Date(entry.getLong("date"))))));
 
-            if (duration == -1) {
-                lore.add(colorize(plugin.getConfig().getString("messages.history.entry.duration.permanent")));
+            // Add status and remaining time
+            String status = entry.getString("status", "Unknown");
+            if (status.equals("Active")) {
+                long expiryTime = entry.getLong("expiry", 0);
+                if (expiryTime > System.currentTimeMillis()) {
+                    long remaining = expiryTime - System.currentTimeMillis();
+                    lore.add(plugin.colorize("&7Status: &eActive &7(&e" + formatTime(remaining) + " remaining&7)"));
+                } else {
+                    // Automatically update to Finished if expired
+                    plugin.updatePunishmentStatus(uuid, entry.getLong("date"), true);
+                    lore.add(plugin.colorize("&7Status: &aFinished"));
+                }
             } else {
-                lore.add(colorize(plugin.getConfig().getString("messages.history.entry.duration.temporary")
-                        .replace("{duration}", formatDuration(duration))));
+                lore.add(plugin.colorize("&7Status: &" + (status.equals("Permanent") ? "c" : "a") + status));
             }
 
             meta.setLore(lore);
-            paper.setItemMeta(meta);
-            historyItems.add(paper);
+            item.setItemMeta(meta);
+            gui.setItem(slot++, item);
         }
 
-        for (int i = 0; i < Math.min(historyItems.size(), 54); i++) {
-            gui.setItem(i, historyItems.get(i));
-        }
-
-        viewer.openInventory(gui);
+        player.openInventory(gui);
     }
 
-    private String formatDuration(long duration) {
-        long seconds = duration / 1000;
-        long minutes = seconds / 60;
-        long hours = minutes / 60;
-        long days = hours / 24;
+    private String formatTime(long millis) {
+        if (millis < 0) return "0 seconds";
 
-        if (days > 0) {
-            return days + " day(s)";
-        } else if (hours > 0) {
-            return hours + " hour(s)";
-        } else if (minutes > 0) {
-            return minutes + " minute(s)";
-        } else {
-            return seconds + " second(s)";
-        }
-    }
+        long days = TimeUnit.MILLISECONDS.toDays(millis);
+        millis -= TimeUnit.DAYS.toMillis(days);
+        long hours = TimeUnit.MILLISECONDS.toHours(millis);
+        millis -= TimeUnit.HOURS.toMillis(hours);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        millis -= TimeUnit.MINUTES.toMillis(minutes);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
 
-    private String colorize(String message) {
-        return ChatColor.translateAlternateColorCodes('&', message);
+        StringBuilder sb = new StringBuilder();
+        if (days > 0) sb.append(days).append("d ");
+        if (hours > 0) sb.append(hours).append("h ");
+        if (minutes > 0) sb.append(minutes).append("m ");
+        if (seconds > 0) sb.append(seconds).append("s");
+
+        return sb.toString().trim();
     }
 }

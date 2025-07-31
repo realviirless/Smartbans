@@ -7,6 +7,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 
 public class UnmuteCommand implements CommandExecutor {
 
@@ -32,27 +34,41 @@ public class UnmuteCommand implements CommandExecutor {
         }
 
         String playerName = args[0];
-        OfflinePlayer target = Bukkit.getOfflinePlayer(playerName);
+        String uuid = Bukkit.getOfflinePlayer(playerName).getUniqueId().toString();
 
-        if (!plugin.getBansConfig().contains("muted-players." + target.getUniqueId().toString())) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                plugin.getConfig().getString("messages.not-muted", "&cPlayer is not muted!")
-                    .replace("{player}", target.getName())));
+        if (!plugin.getBansConfig().contains("muted-players." + uuid)) {
+            String message = plugin.getConfig().getString("messages.not-muted")
+                    .replace("{player}", playerName);
+            sender.sendMessage(plugin.colorize(message));
             return true;
         }
 
+        // Find and update the status of the active mute in history
+        ConfigurationSection history = plugin.getHistoryConfig().getConfigurationSection(uuid);
+        if (history != null) {
+            for (String timestamp : history.getKeys(false)) {
+                ConfigurationSection entry = history.getConfigurationSection(timestamp);
+                if (entry != null && entry.getString("type").equals("MUTE")
+                    && entry.getString("status", "").equals("Active")) {
+                    plugin.updatePunishmentStatus(uuid, Long.parseLong(timestamp), true);
+                    break;
+                }
+            }
+        }
+
         // Remove mute from config
-        plugin.getBansConfig().set("muted-players." + target.getUniqueId().toString(), null);
+        plugin.getBansConfig().set("muted-players." + uuid, null);
         plugin.saveBansConfig();
 
         // Send success messages
         String unmuteMessage = plugin.getConfig().getString("messages.unmute-success", "&aSuccessfully unmuted {player}")
-            .replace("{player}", target.getName());
+            .replace("{player}", playerName);
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', unmuteMessage));
 
-        if (target.isOnline()) {
+        Player target = Bukkit.getPlayer(playerName);
+        if (target != null) {
             String playerMessage = plugin.getConfig().getString("messages.player-unmuted", "&aYou have been unmuted!");
-            target.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', playerMessage));
+            target.sendMessage(ChatColor.translateAlternateColorCodes('&', playerMessage));
         }
 
         return true;

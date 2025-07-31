@@ -88,8 +88,8 @@ public class BanCommand implements CommandExecutor {
         // Check if target has bypass permission (prevent banning staff)
         if (target.isOnline()) {
             Player onlineTarget = (Player) target;
-            if (onlineTarget.hasPermission("banplugin.bypass")) {
-                sender.sendMessage(colorize(plugin.getConfig().getString("messages.cannot-ban-staff")));
+            if (onlineTarget.hasPermission("banplugin.bypass") || onlineTarget.isOp()) {
+                sender.sendMessage(colorize(plugin.getConfig().getString("messages.staff-bypass")));
                 return true;
             }
         }

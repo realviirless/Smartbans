@@ -6,6 +6,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 
 public class UnbanCommand implements CommandExecutor {
 
@@ -42,6 +43,19 @@ public class UnbanCommand implements CommandExecutor {
                     .replace("{player}", target.getName());
             sender.sendMessage(colorize(message));
             return true;
+        }
+
+        // Find and update the status of the active ban in history
+        ConfigurationSection history = plugin.getHistoryConfig().getConfigurationSection(uuid);
+        if (history != null) {
+            for (String timestamp : history.getKeys(false)) {
+                ConfigurationSection entry = history.getConfigurationSection(timestamp);
+                if (entry != null && entry.getString("type").equals("BAN")
+                        && entry.getString("status", "").equals("Active")) {
+                    plugin.updatePunishmentStatus(uuid, Long.parseLong(timestamp), true);
+                    break;
+                }
+            }
         }
 
         // Remove ban from bans.yml
